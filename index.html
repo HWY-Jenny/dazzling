@@ -390,6 +390,22 @@
                 
                 <button id="save-settings-btn" onclick="saveSettings()">保存并生效</button>
             </div>
+
+            <div id="settings-app" class="app-view" style="padding: 20px; overflow-y: auto; flex-grow: 1;">
+                <h3>数据管理</h3>
+                
+                <div id="export-section">
+                    <button id="export-btn">💾 导出聊天记录 (JSON)</button>
+                </div>
+
+                <hr>
+                
+                <div id="import-section">
+                    <label for="import-file">选择要导入的 JSON 文件：</label>
+                    <input type="file" id="import-file" accept=".json">
+                    <button id="import-btn" disabled>导入并覆盖记录</button>
+                </div>
+            </div>
         </div>
 
 
@@ -1152,6 +1168,51 @@
         function closeSettings() {
             showPage('chat-page', document.querySelector('.nav-item:nth-child(2)'));
         }
+
+        /**
+         * 导出聊天记录为 JSON 文件
+         */
+        document.getElementById('export-btn').addEventListener('click', () => {
+            const dataStr = JSON.stringify(chatHistory, null, 2); // 格式化 JSON
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+            const exportFileName = 'DazzleLight_Chat_Backup_' + new Date().toISOString().slice(0, 10) + '.json';
+
+            // 创建一个隐藏的下载链接并点击
+            let linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileName);
+            document.body.appendChild(linkElement);
+            linkElement.click();
+            document.body.removeChild(linkElement);
+        });
+        
+        /**
+         * 导入聊天记录从 JSON 文件
+         */
+        document.getElementById('import-file').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file && file.type === "application/json") {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        chatHistory = importedData; 
+                        localStorage.setItem('chatHistory', JSON.stringify(importedData));
+                        
+                        
+                        alert('聊天记录导入成功！');
+                        // 刷新或更新聊天 UI
+                    } catch (error) {
+                        alert('文件解析失败，请确保文件是有效的 JSON 格式。');
+                    }
+                };
+                reader.readAsText(file); // 读取文件内容为文本
+            } else {
+                alert('请选择 JSON 文件。');
+            }
+        });
 
         /**
          * 更新发送按钮的状态
