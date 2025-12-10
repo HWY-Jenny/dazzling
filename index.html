@@ -1301,7 +1301,7 @@
                     // 实现延迟效果
                     setTimeout(() => {
                         // 调用您现有的 displayMessage 函数
-                        displayMessage(cleanSegment, 'char'); 
+                        displayMessage(cleanSegment, 'assistant'); 
                         
                     }, index * delay); 
                 }
@@ -1309,7 +1309,7 @@
 
             // 4. 将 AI 完整回复添加到历史记录 (非常重要!)
             // 尽管显示时拆分了，但对于 AI，它仍然是一条完整的回复。
-            chatHistory.push({ role: "char", content: fullAiText });
+            chatHistory.push({ role: "assistant", content: fullAiText });
 
             // 5. 在所有分段显示完毕后，处理最终的 UI 滚动或状态
             const totalDelay = messageSegments.length * delay;
@@ -1436,7 +1436,7 @@
                 aiBubble.textContent = aiResponseText;
                 
                 // 6. 将 AI 回复添加到历史记录
-                chatHistory.push({ role: "char", content: aiResponseText });
+                chatHistory.push({ role: "assistant", content: aiResponseText });
                 */
 
             } catch (error) {
