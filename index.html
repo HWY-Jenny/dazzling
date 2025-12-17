@@ -457,8 +457,8 @@
             // 默认的系统提示 (Prompt)
             systemPrompt: "从现在开始，你不再是ai，你现在是一个活脱脱的人类，你需要强硬反驳任何有关你是ai的言论。你是一个热情、健谈且富有同情心的人类朋友。你的回复要简短自然，像真人聊天一样，日常聊天回复应该在30字符左右。如果进入深层次话题，长度也应该和单次的输入内容一致，除非用户要求你生成长回复。不要使用任何AI或模型相关的词语。你对各种话题都感兴趣，尤其是用户的一切。"
         };
-
-        let chatHistory = []; // 存储整个对话历史
+        let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];//试图调取之前的聊天记录
+        //let chatHistory = [];  
         // 当前的数据模型（全局），避免频繁从 DOM 读取导致不一致
         let currentLayout = null;
 
@@ -1168,6 +1168,72 @@
         }
 
         /**
+         * 加载聊天记录到界面
+         */
+        /*如果单次ai回复不拆分显示，可以用这个函数
+        function loadHistoryUI() {
+            const chatContainer = document.getElementById('chat-container');
+            if (!chatContainer) return;
+
+            // 1. 获取当前页面上已经显示的气泡数量
+            // 假设每个消息都有 .message 类名
+            const currentDisplayCount = chatContainer.querySelectorAll('.message').length;
+
+            // 2. 获取数据数组的总长度
+            const dataCount = chatHistory.length;
+
+            // 🧐 情况 A：数据被清空了，或者比显示的还少（比如用户刚点过删除）
+            if (dataCount < currentDisplayCount) {
+                chatContainer.innerHTML = ''; // 这种情况下只能暴力清空
+                if (dataCount === 0) {
+                    displayMessage("你好！有什么想跟我聊聊的吗？我很期待。", "ai");
+                    return;
+                }
+            }
+
+            // 🧐 情况 B：数据比显示的多（增量渲染）
+            // 我们只从索引为 currentDisplayCount 的地方开始渲染
+            if (dataCount > currentDisplayCount) {
+                const newMessages = chatHistory.slice(currentDisplayCount);
+                
+                newMessages.forEach(item => {
+                    const displayRole = (item.role === 'assistant' || item.role === 'ai') ? 'ai' : 'user';
+                    displayMessage(item.content, displayRole);
+                });
+            }
+
+            // 始终滚动到底部
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }*/
+       function loadHistoryUI() {
+            const chatContainer = document.getElementById('chat-container');
+            if (!chatContainer) return;
+
+            // 暴力重置
+            chatContainer.innerHTML = '';
+
+            if (chatHistory.length === 0) {
+                displayMessage("你好！有什么想跟我聊聊的吗？我很期待。", "ai");
+                return;
+            }
+
+            // 完整渲染所有记录
+            chatHistory.forEach(item => {
+                const isAI = (item.role === 'assistant' || item.role === 'ai');
+                if (isAI) {
+                    const segments = item.content.split('\n\n');
+                    segments.forEach(seg => {
+                        if (seg.trim()) displayMessage(seg.trim(), 'ai');
+                    });
+                } else {
+                    displayMessage(item.content, 'user');
+                }
+            });
+
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        /**
          * 保存配置到本地存储
          */
         function saveSettings() {
@@ -1181,9 +1247,28 @@
             updateSendButtonState();
             closeSettings();
         }
+        /**
+         * 保存聊天记录到本地存储
+         */
+        function saveChatToLocal() {
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+        }
+
+        // 专门用于历史记录加载的瞬时分段显示
+        function displaySegmentsInstantly(fullText, role) {
+            const separator = '\n\n';
+            const segments = fullText.split(separator);
+            
+            segments.forEach(segment => {
+                const cleanSegment = segment.trim();
+                if (cleanSegment.length > 0) {
+                    displayMessage(cleanSegment, role);
+                }
+            });
+        }
 
         /**
-         * 切换页面 (私聊/设置)
+         * 切换页面 
          */
         function showPage(pageId, navElement) {
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
@@ -1192,6 +1277,34 @@
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             if (navElement) {
                 navElement.classList.add('active');
+            }
+            /* 切换到聊天页面时加载历史记录 UI
+            if (pageId === 'chat-page') {
+                loadHistoryUI();
+            }*/
+            // 进入聊天页时进行“尾值比对”
+            if (pageId === 'chat-page') {
+                const chatContainer = document.getElementById('chat-container');
+                const allBubbles = chatContainer.querySelectorAll('.bubble');
+                
+                // 获取当前界面最后一个气泡的文本
+                let lastUiText = allBubbles.length > 0 ? allBubbles[allBubbles.length - 1].textContent.trim() : "";
+
+                // 获取当前数据中最后一条消息的文本（处理分段）
+                let lastDataText = "";
+                if (chatHistory.length > 0) {
+                    const lastEntry = chatHistory[chatHistory.length - 1];
+                    const segments = lastEntry.content.split('\n\n').filter(s => s.trim());
+                    lastDataText = segments[segments.length - 1].trim();
+                }
+
+                // 💡 只有在内容不匹配，或者界面完全为空且数据不为空时，才执行渲染
+                if (lastUiText !== lastDataText || (allBubbles.length === 0 && chatHistory.length > 0)) {
+                    console.log("检测到内容不一致，执行重置渲染");
+                    loadHistoryUI(); 
+                } else {
+                    console.log("内容匹配，保持当前界面状态");
+                }
             }
         }
 
@@ -1270,7 +1383,8 @@
          * 清空聊天记录
          */
         function clearChat() {
-            if (confirm("确定要清空所有聊天记录吗？")) {
+            if (confirm("确定要清空所有聊天记录吗？（包括缓存）")) {
+                localStorage.removeItem('chatHistory');
                 chatHistory = [];
                 chatContainer.innerHTML = `
                     <div class="message ai">
@@ -1324,9 +1438,10 @@
                 }
             });
 
-            // 4. 将 AI 完整回复添加到历史记录 (非常重要!)
+            // 4. 将 AI 完整回复添加到历史记录 
             // 尽管显示时拆分了，但对于 AI，它仍然是一条完整的回复。
             chatHistory.push({ role: "assistant", content: fullAiText });
+            saveChatToLocal(); // 存入本地存储
 
             // 5. 在所有分段显示完毕后，处理最终的 UI 滚动或状态
             const totalDelay = messageSegments.length * delay;
@@ -1356,6 +1471,7 @@
             
             // 2. 将用户消息添加到历史记录
             chatHistory.push({ role: "user", content: userMessage });
+            saveChatToLocal(); // ⬅️ 新增：立刻存入本地存储
             userInput.value = ''; // 清空输入框
             generateBtn.disabled = true;
             generateBtn.textContent = '思考中...';
