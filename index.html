@@ -619,6 +619,26 @@
                     </p>
                 </div>
                 
+                <div style="margin-top: 15px;">
+                    <label for="batch-wait-time" style="display: block; margin-bottom: 5px;">
+                        多条消息等待时间（秒）：
+                    </label>
+                    
+                    <input 
+                        type="number" 
+                        id="batch-wait-time" 
+                        value="7" 
+                        min="1" 
+                        max="30" 
+                        style="width: 80px; padding: 5px; border: 1px solid #ccc; border-radius: 4px;"
+                    >
+                    <span style="margin-left: 10px;">秒</span>
+                    
+                    <p style="font-size: 0.8em; color: #666; margin-top: 5px;">
+                        * 发送消息后，如果在此时间内没有新消息，将自动发送给 AI。
+                    </p>
+                </div>
+                
                 <h3>数据管理</h3>
                 <div id="export-section">
                     <button id="export-btn">💾 导出聊天记录 (JSON)</button>
@@ -665,6 +685,13 @@
         // 每个气泡: { id, role, content, timestamp }
         let chatHistory = [];
         let pendingSummaryBubbles = []; // 待总结的气泡缓冲区
+        
+        // ========== 批量发送相关 ==========
+        let pendingUserMessages = []; // 临时队列：存储本轮用户消息的气泡ID
+        let batchSendTimer = null; // 计时器
+        let isWaitingForAI = false; // 是否正在等待AI回复
+        let hasReachedWaitTime = false; // 是否已达到等待时间（7秒）
+        // =====================================
         
         // 从localStorage加载并自动转换格式
         (function loadAndMigrateChatHistory() {
@@ -1466,6 +1493,17 @@
             document.getElementById('apikey').value = config.apikey;
             document.getElementById('modelname').value = config.modelname;
             document.getElementById('system-prompt').value = config.systemPrompt;
+            
+            // 加载上下文窗口大小
+            const contextWindowSize = localStorage.getItem('contextWindowSize') || '50';
+            document.getElementById('context-window-size').value = contextWindowSize;
+            
+            // 加载批量发送等待时间
+            const batchWaitTime = localStorage.getItem('batchWaitTime') || '7';
+            document.getElementById('batch-wait-time').value = batchWaitTime;
+            
+            console.log('📖 已加载上下文窗口大小:', contextWindowSize);
+            console.log('📖 已加载批量等待时间:', batchWaitTime, '秒');
         }
 
         /**
@@ -1604,9 +1642,22 @@
             config.modelname = document.getElementById('modelname').value.trim();
             config.systemPrompt = document.getElementById('system-prompt').value.trim();
             
+            // 获取上下文窗口大小
+            const contextWindowSize = document.getElementById('context-window-size').value;
+            
             // 保存聊天对象名称
             localStorage.setItem('chatName', chatName || 'AI 聊天对象');
             localStorage.setItem('aiChatConfig', JSON.stringify(config));
+            
+            // 保存上下文窗口大小
+            localStorage.setItem('contextWindowSize', contextWindowSize);
+            
+            // 保存批量发送等待时间
+            const batchWaitTime = document.getElementById('batch-wait-time').value;
+            localStorage.setItem('batchWaitTime', batchWaitTime);
+            
+            console.log('💾 已保存上下文窗口大小:', contextWindowSize);
+            console.log('💾 已保存批量等待时间:', batchWaitTime, '秒');
             
             // 立即更新聊天页面标题
             updateChatName();
@@ -2320,7 +2371,29 @@
                 chatNameElement.textContent = chatNameElement.dataset.originalName;
             }
         }
-        
+        /**
+         * 清理 API 响应文本，去除时间戳等多余信息
+         * @param {string} text - 原始文本
+         * @returns {string} 清理后的文本
+         */
+        function cleanApiResponse(text) {
+            if (!text) return "";
+            
+            // 移除开头的时间戳：[2024/12/20 21:39] 或 [2024/12/20 21:39 星期五]
+            // 匹配格式：[年/月/日 时:分] 或 [年/月/日 时:分 星期X]
+            const timestampRegex = /^\s*\[\d{4}\/\d{2}\/\d{2}\s+\d{2}:\d{2}(?:\s+星期[一二三四五六日])?\]\s*/;
+            
+            // 移除时间戳
+            let cleaned = text.replace(timestampRegex, '');
+            
+            // 如果还有多余的空白，再清理一次
+            cleaned = cleaned.trim();
+            
+            console.log('🧹 清理前:', text.substring(0, 50));
+            console.log('🧹 清理后:', cleaned.substring(0, 50));
+            
+            return cleaned;
+        }
         /**
          * 处理 AI 的完整响应，并根据 '\n\n' 逐条显示消息。
          * 同时将完整的AI回复计入 chatHistory。
@@ -2339,7 +2412,9 @@
 
             // 3. 逐条遍历并使用 setTimeout 实现延迟显示
             messageSegments.forEach((segment, index) => {
-                const cleanSegment = segment.trim();
+                // 清理可能的时间戳（有些AI可能在每段都加时间戳）
+                let cleanSegment = cleanApiResponse(segment);
+                cleanSegment = cleanSegment.trim();
 
                 if (cleanSegment.length > 0) {
                     // 实现延迟效果
@@ -2355,41 +2430,119 @@
             setTimeout(() => {
                 // 确保滚动到最后一条消息
                 chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                // AI回复完成后，重置等待状态
+                isWaitingForAI = false;
+                console.log('✅ AI回复完成，等待状态已重置');
+                
+                // 检查是否有待发送的消息
+                if (pendingUserMessages.length > 0) {
+                    if (hasReachedWaitTime) {
+                        // 队列中的消息已经等够7秒 → 立即发送
+                        console.log('📬 发现待发送消息', pendingUserMessages.length, '条，且已到时间，立即发送');
+                        sendBatchMessages();
+                    } else {
+                        // 队列中的消息还未到7秒 → 继续计时
+                        console.log('📬 发现待发送消息', pendingUserMessages.length, '条，但未到时间，继续计时');
+                        startBatchTimer();
+                    }
+                }
             }, totalDelay);
         }
-
+        
+        // ========== 批量发送功能 ==========
         /**
-         * 点击生成按钮，调用 API
+         * 开始批量发送计时器
          */
-        generateBtn.onclick = async () => {
-            const userMessage = userInput.value.trim();
-            if (!userMessage) return;
-
-            // 检查配置
-            if (!config.baseurl || !config.apikey) {
-                alert('请先在设置中填写 Base URL 和 API Key！');
+        function startBatchTimer() {
+            // 清除之前的计时器
+            if (batchSendTimer) {
+                clearTimeout(batchSendTimer);
+            }
+            
+            // 重置"已到时间"标记
+            hasReachedWaitTime = false;
+            
+            // 获取等待时间（秒）
+            const waitTime = parseInt(localStorage.getItem('batchWaitTime')) || 7;
+            
+            console.log('⏰ 启动计时器，等待', waitTime, '秒...');
+            
+            // 启动新计时器
+            batchSendTimer = setTimeout(() => {
+                console.log('⏰ 计时器到期');
+                sendBatchMessages();
+            }, waitTime * 1000);
+        }
+        
+        /**
+         * 取消批量发送计时器
+         */
+        function cancelBatchTimer() {
+            if (batchSendTimer) {
+                clearTimeout(batchSendTimer);
+                batchSendTimer = null;
+                console.log('⏰ 计时器已取消');
+            }
+        }
+        
+        /**
+         * 发送批量消息（计时器到期时调用）
+         */
+        async function sendBatchMessages() {
+            // 标记已到达等待时间
+            hasReachedWaitTime = true;
+            
+            if (pendingUserMessages.length === 0) {
+                console.log('📭 没有待发送的消息');
+                hasReachedWaitTime = false;
                 return;
             }
-
-            // 1. 在界面显示用户消息（初始状态：单勾）
-            // displayMessage 会自动保存到 chatHistory 和 pendingSummaryBubbles
-            displayMessage(userMessage, 'user', 1);
             
-            userInput.value = ''; // 清空输入框
-            generateBtn.disabled = true;
-            generateBtn.textContent = '思考中...';
-
-            // 3. 模拟发送到服务器，更新为双勾
-            setTimeout(() => {
-                updateLastMessageStatus(2); // 显示双勾
-            }, 200);
-
-            // 4. 显示"对方正在输入中..."
-            setTimeout(() => {
-                showTypingIndicator();
-            }, 300);
-
-            // 3. 构建 API 请求体
+            // 检查是否正在等待AI回复
+            if (isWaitingForAI) {
+                console.log('⏳ 已到7秒但正在等待AI回复，保持hasReachedWaitTime=true');
+                // 不重启计时器，保持hasReachedWaitTime=true
+                // 等AI回复完成后会检查这个标记
+                return;
+            }
+            
+            // 两个条件都满足：已到时间 AND 不在等待AI
+            console.log('📤 发送批量消息，共', pendingUserMessages.length, '条');
+            
+            // 重置标记
+            hasReachedWaitTime = false;
+            
+            // 标记正在等待AI
+            isWaitingForAI = true;
+            
+            // 将所有待发送消息的状态更新为双勾
+            pendingUserMessages.forEach(bubbleId => {
+                const messageDiv = chatContainer.querySelector(`[data-bubble-id="${bubbleId}"]`);
+                if (messageDiv) {
+                    const checkmark = messageDiv.querySelector('.checkmark');
+                    if (checkmark) {
+                        checkmark.classList.add('double');
+                        checkmark.textContent = '✓✓';
+                    }
+                    messageDiv.dataset.status = '2';
+                }
+            });
+            
+            // 显示"对方正在输入中..."
+            showTypingIndicator();
+            
+            // 清空待发送队列
+            pendingUserMessages = [];
+            
+            // 调用API
+            await callAPIToGenerate();
+        }
+        
+        /**
+         * 调用API生成回复（从generateBtn.onclick中提取）
+         */
+        async function callAPIToGenerate() {
             // 预留一个位置给 AI 的回复，用于流式响应或加载指示
             const aiMessagePlaceholder = document.createElement('div');
             aiMessagePlaceholder.classList.add('message', 'ai');
@@ -2400,12 +2553,7 @@
             chatContainer.appendChild(aiMessagePlaceholder);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            // 完整的请求消息列表：系统指令 + 聊天历史
-            // A. 获取长期记忆总结 (Long-Term Memory)
-            //const longTermMemory = localStorage.getItem('long_term_memory') || '';
-            
             // B. 获取用户设置的上下文窗口大小 (N)
-            // 确保使用您在设置中设置的 KEY
             const contextSizeKey = 'contextWindowSize'; 
             const N = parseInt(localStorage.getItem(contextSizeKey)) || 50; 
             
@@ -2417,44 +2565,24 @@
             console.log('💰 Token优化:', recentBubbles.length, '个气泡 →', apiMessages.length, '条API消息');
 
             // E. 构建最终的 Messages 列表
-            // 1. 核心系统指令 (角色设定)
             let finalSystemPrompt = config.systemPrompt;
             
-            // 2. 添加当前时间信息到系统提示
+            // 添加当前时间信息到系统提示
             const now = new Date();
             const currentTimeStr = now.toLocaleString('zh-CN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                weekday: 'long',
-                hour12: false
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', weekday: 'long', hour12: false
             });
             finalSystemPrompt += `\n\n[当前时间]: ${currentTimeStr}`;
             
-            /*2. 附加长期记忆到系统指令中
-            if (longTermMemory.length > 0) {
-                finalSystemPrompt += `\n\n[核心长期记忆]：\n${longTermMemory}`;
-            }*/
-            
-            // 完整的请求消息列表：
-            // [System Prompt + 长期记忆] + [短期聊天记录 (已合并)]
-            // 为每条消息添加时间信息，让AI能感知时间
+            // 为每条消息添加时间信息
             const messagesWithTime = apiMessages.map(msg => {
                 if (msg.timestamp) {
-                    // 将ISO时间戳转换为可读格式
                     const time = new Date(msg.timestamp);
                     const timeStr = time.toLocaleString('zh-CN', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: false
+                        year: 'numeric', month: '2-digit', day: '2-digit',
+                        hour: '2-digit', minute: '2-digit', hour12: false
                     });
-                    
-                    // 在消息内容前添加时间标记
                     return {
                         role: msg.role,
                         content: `[${timeStr}] ${msg.content}`
@@ -2471,17 +2599,12 @@
                 { role: "system", content: finalSystemPrompt },
                 ...messagesWithTime 
             ];
-            /*const messages = [
-                { role: "system", content: config.systemPrompt },
-                ...chatHistory
-            ];*/
             
             const requestBody = {
                 model: config.modelname,
                 messages: messages,
-                max_tokens: 3000, // 限制回复长度
-                temperature: 1.2, // 增加一些随机性，使对话更像真人
-                // stream: true // 如果要实现流式回复，需要更复杂的逻辑
+                max_tokens: 3000,
+                temperature: 1.2
             };
 
             const apiUrl = config.baseurl.endsWith('/v1') ? 
@@ -2489,7 +2612,6 @@
                            `${config.baseurl}/v1/chat/completions`;
 
             try {
-                // 4. 发送 API 请求
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
@@ -2505,40 +2627,58 @@
                 }
 
                 const data = await response.json();
-                const aiResponseText = data.choices[0].message.content.trim();
+                let aiResponseText = data.choices[0].message.content.trim();
+                console.log("【API原始输出】:", encodeURI(aiResponseText).substring(0, 50));
+                aiResponseText = cleanApiResponse(aiResponseText);
+                console.log("【API清理后输出】:", encodeURI(aiResponseText).substring(0, 50));
                 
-                // 5. 替换/修改 AI 回复处理逻辑
-                
-                // A. 移除预留的占位符（'...'）
+                // 移除预留的占位符
                 chatContainer.removeChild(aiMessagePlaceholder);
                 
-                // B. 隐藏"对方正在输入中..."
+                // 隐藏"对方正在输入中..."
                 hideTypingIndicator();
                 
-                // C. 调用新的函数来处理并逐条显示消息
-                // 传入完整的文本和历史记录数组，进行分段、延迟显示和历史记录更新。
+                // 调用函数来处理并逐条显示消息
                 processAndDisplaySegments(aiResponseText);
-                
-                
-                // 7. 解锁 UI (如果需要)
-                // enableInput(); // 例如：在这里调用解锁输入框的函数
-                /*未实现分段版 5. 处理 AI 回复
-                // 更新占位符为实际的回复内容
-                aiBubble.textContent = aiResponseText;
-                
-                // 6. 将 AI 回复添加到历史记录
-                chatHistory.push({ role: "assistant", content: aiResponseText });
-                */
 
             } catch (error) {
                 console.error("API 调用出错:", error);
                 aiBubble.textContent = `[错误] 无法获取回复。请检查您的设置和网络连接。详细错误：${error.message}`;
-                hideTypingIndicator(); // 出错时也要隐藏
-            } finally {
-                // 7. 恢复发送按钮状态
-                generateBtn.disabled = false;
-                updateSendButtonState();
+                hideTypingIndicator();
+                isWaitingForAI = false;
             }
+        }
+        // ====================================
+
+        /**
+         * 点击生成按钮，调用 API
+         */
+        /**
+         * 点击发送按钮
+         */
+        generateBtn.onclick = async () => {
+            const userMessage = userInput.value.trim();
+            if (!userMessage) return;
+
+            // 检查配置
+            if (!config.baseurl || !config.apikey) {
+                alert('请先在设置中填写 Base URL 和 API Key！');
+                return;
+            }
+
+            // 1. 显示用户消息（单勾）
+            const bubble = displayMessage(userMessage, 'user', 1);
+            
+            // 2. 清空输入框
+            userInput.value = '';
+            updateSendButtonState();
+            
+            // 3. 将此气泡ID加入待发送队列
+            pendingUserMessages.push(bubble.id);
+            console.log('📝 添加到队列:', bubble.id, '当前队列长度:', pendingUserMessages.length);
+            
+            // 4. 启动/重启计时器
+            startBatchTimer();
         };
         /**
          *滚动到聊天内容底部（双 requestAnimationFrame 确保渲染完成）
