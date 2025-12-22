@@ -200,32 +200,57 @@
             background-color: #f7f7f7;
             padding: 8px 10px;
             display: flex;
+            align-items: center;
+            gap: 8px;
             border-top: 1px solid #dcdcdc;
             box-shadow: 0 -1px 3px rgba(0,0,0,0.05);
             flex-shrink: 0;
         }
+        
+        .input-tool-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            flex-shrink: 0;
+        }
+        
+        .input-tool-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .input-tool-btn:active {
+            background-color: #d0d0d0;
+        }
 
         #user-input {
             flex-grow: 1;
-            padding: 10px;
+            padding: 8px 12px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 16px;
             resize: none; /* 禁止用户调整大小 */
             max-height: 80px;
             overflow-y: auto;
-            margin-right: 10px;
+            background-color: white;
         }
 
         #generate-btn {
             background-color: #1AAD19;
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 8px 16px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         #generate-btn:disabled {
@@ -453,6 +478,338 @@
             background: rgba(0,0,0,0.05);
         }
         
+        /* 批量生成对话框 */
+        .batch-generate-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10004;
+        }
+        
+        .batch-generate-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        
+        .batch-generate-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .batch-generate-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .batch-generate-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        
+        .batch-generate-close:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .batch-generate-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .batch-generate-footer {
+            display: flex;
+            gap: 12px;
+            padding: 16px 20px;
+            border-top: 1px solid #e0e0e0;
+            justify-content: flex-end;
+        }
+        
+        /* 单选按钮样式增强 */
+        input[type="radio"]:checked + div {
+            color: #4CAF50;
+        }
+        
+        label:has(input[type="radio"]:checked) {
+            border-color: #4CAF50 !important;
+            background-color: #f1f8f4;
+        }
+        
+        /* 导入记忆对话框 */
+        .import-memory-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10005;
+        }
+        
+        .import-memory-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 550px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        
+        .import-memory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .import-memory-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .import-memory-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        
+        .import-memory-close:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .import-memory-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .import-memory-footer {
+            display: flex;
+            gap: 12px;
+            padding: 16px 20px;
+            border-top: 1px solid #e0e0e0;
+            justify-content: flex-end;
+        }
+        
+        /* 记忆编辑模态窗口 */
+        .memory-edit-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10003;
+        }
+        
+        .memory-edit-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        
+        .memory-edit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .memory-edit-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .memory-edit-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        
+        .memory-edit-close:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .memory-edit-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .memory-section {
+            margin-bottom: 24px;
+        }
+        
+        .memory-section h4 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 6px;
+        }
+        
+        .memory-section textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            resize: vertical;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        
+        .basic-info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+        
+        .basic-info-item label {
+            min-width: 80px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .basic-info-item input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .event-item {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .event-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .event-item-date {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .event-item-importance {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .event-item-importance label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .event-item-importance input {
+            width: 60px;
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .event-item-delete {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .event-item textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            resize: vertical;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        
+        .memory-edit-footer {
+            display: flex;
+            gap: 12px;
+            padding: 16px 20px;
+            border-top: 1px solid #e0e0e0;
+            justify-content: flex-end;
+        }
+        
         /* 确认对话框 */
         .confirm-dialog {
             position: fixed;
@@ -659,17 +1016,6 @@
             background: rgba(0, 0, 0, 0.03);
             border-left-color: rgba(0, 0, 0, 0.15);
         }
-        
-        /* 输入区域调整 */
-        .chat-input-area {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .chat-input-area > textarea,
-        .chat-input-area > button {
-            /* 确保在有引用时也能正常显示 */
-        }
     </style>
 </head>
 <body>
@@ -710,7 +1056,30 @@
             </div>
 
             <div class="chat-input-area" id="chat-input-area">
+                <button class="input-tool-btn" id="voice-btn" title="语音输入（开发中）">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                </button>
                 <textarea id="user-input" placeholder="输入消息..." rows="1"></textarea>
+                <button class="input-tool-btn" id="emoji-btn" title="表情包（开发中）">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                        <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                        <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                    </svg>
+                </button>
+                <button class="input-tool-btn" id="plus-btn" title="更多功能（开发中）">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="16"></line>
+                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                    </svg>
+                </button>
                 <button id="generate-btn" disabled>发送</button>
             </div>
         </div>
@@ -814,20 +1183,146 @@
                     </p>
                 </div>
                 
+                <hr>
+                <h3>长期记忆设置</h3>
+                
+                <h4 style="margin-top: 20px; margin-bottom: 10px; color: #555;">基本信息（可选预填写）</h4>
+                <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <p style="font-size: 0.85em; color: #666; margin-bottom: 10px;">
+                        💡 提前填写基本信息可以让AI更好地了解你。这些信息会在聊天时自动提供给AI。
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                        <div>
+                            <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">姓名：</label>
+                            <input type="text" id="memory-name" placeholder="例如：小明" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">年龄：</label>
+                            <input type="text" id="memory-age" placeholder="例如：25" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">职业：</label>
+                            <input type="text" id="memory-occupation" placeholder="例如：程序员" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">居住地：</label>
+                            <input type="text" id="memory-location" placeholder="例如：北京" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 10px;">
+                        <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">外貌特征：</label>
+                        <input type="text" id="memory-appearance" placeholder="例如：高个子、短发、戴眼镜" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+                    
+                    <div style="margin-top: 10px;">
+                        <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">兴趣爱好：</label>
+                        <input type="text" id="memory-interests" placeholder="例如：编程、游戏、旅行" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+                    
+                    <button onclick="saveBasicInfo()" style="margin-top: 10px; padding: 8px 16px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                        💾 保存基本信息
+                    </button>
+                </div>
+                
+                <h4 style="margin-bottom: 10px; color: #555;">自动总结设置</h4>
+                <div style="margin-top: 15px;">
+                    <label for="auto-summary-interval" style="display: block; margin-bottom: 5px;">
+                        自动总结间隔（气泡数）：
+                    </label>
+                    
+                    <input 
+                        type="number" 
+                        id="auto-summary-interval" 
+                        value="50" 
+                        min="10" 
+                        max="200" 
+                        style="width: 80px; padding: 5px; border: 1px solid #ccc; border-radius: 4px;"
+                    >
+                    <span style="margin-left: 10px;">个气泡</span>
+                    
+                    <p style="font-size: 0.8em; color: #666; margin-top: 5px;">
+                        * 每积累此数量的新气泡，自动调用AI生成长期记忆总结。
+                    </p>
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <label for="max-important-events" style="display: block; margin-bottom: 5px;">
+                        保存重要事件数量：
+                    </label>
+                    
+                    <input 
+                        type="number" 
+                        id="max-important-events" 
+                        value="10" 
+                        min="5" 
+                        max="50" 
+                        style="width: 80px; padding: 5px; border: 1px solid #ccc; border-radius: 4px;"
+                    >
+                    <span style="margin-left: 10px;">条</span>
+                    
+                    <p style="font-size: 0.8em; color: #666; margin-top: 5px;">
+                        * 只保留最重要的N条事件（按重要度评分排序）。
+                    </p>
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button onclick="showBatchGenerateDialog()" style="padding: 10px 20px; background-color: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                            🔄 批量生成记忆
+                        </button>
+                        <button onclick="generateMemorySummary(true)" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                            🧠 立即生成（待总结）
+                        </button>
+                        <button onclick="editMemory()" style="padding: 10px 20px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                            ✏️ 查看/编辑记忆
+                        </button>
+                        <button onclick="clearMemory()" style="padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                            🗑️ 清空记忆
+                        </button>
+                    </div>
+                    
+                    <div id="memory-status" style="margin-top: 10px; padding: 10px; background-color: #f0f0f0; border-radius: 4px; font-size: 0.9em;">
+                        <div><strong>当前状态：</strong></div>
+                        <div>• 总气泡数：<span id="total-bubbles-count">0</span> 个</div>
+                        <div>• 待总结气泡：<span id="pending-bubbles-count">0</span> 个</div>
+                        <div>• 重要事件数：<span id="events-count">0</span> 条</div>
+                        <div>• 上次总结：<span id="last-summary-time">从未</span></div>
+                        <div>• 距离下次自动总结：<span id="bubbles-until-next">-</span> 个气泡</div>
+                    </div>
+                </div>
+                
                 <button id="save-settings-btn" onclick="saveSettings()">保存并生效</button>
                 
                 <h3>数据管理</h3>
-                <div id="export-section">
-                    <button id="export-btn">💾 导出聊天记录 (JSON)</button>
+                
+                <h4 style="margin-top: 20px; color: #555;">聊天记录</h4>
+                <div id="export-section" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                    <button id="export-btn" style="padding: 8px 16px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 导出聊天记录</button>
+                </div>
+                
+                <div id="import-section" style="margin-bottom: 15px;">
+                    <label for="import-file" style="display: block; margin-bottom: 8px;">导入聊天记录：</label>
+                    <input type="file" id="import-file" accept=".json" style="margin-bottom: 8px;">
+                    <button id="import-btn" disabled style="padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">📥 导入并覆盖</button>
                 </div>
 
                 <hr>
                 
-                <div id="import-section">
-                    <label for="import-file">选择要导入的 JSON 文件：</label>
-                    <input type="file" id="import-file" accept=".json">
-                    <button id="import-btn" disabled>导入并覆盖记录</button>
+                <h4 style="margin-top: 20px; color: #555;">长期记忆</h4>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                    <button onclick="exportMemory()" style="padding: 8px 16px; background-color: #9C27B0; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        🧠 导出长期记忆
+                    </button>
+                    <button onclick="document.getElementById('import-memory-file').click()" style="padding: 8px 16px; background-color: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        📤 导入长期记忆
+                    </button>
+                    <input type="file" id="import-memory-file" accept=".json" style="display: none;">
                 </div>
+                <p style="font-size: 0.85em; color: #666; margin-top: 5px;">
+                    💡 长期记忆包含基本信息、情感倾向和重要事件，可以备份或在不同设备间同步。
+                </p>
             </div>
         </div>
 
@@ -838,12 +1333,190 @@
     <div class="menu-overlay" id="menu-overlay"></div>
     <div class="bubble-menu" id="bubble-menu"></div>
     
+    <!-- 记忆编辑模态窗口 -->
+    <div class="memory-edit-modal" id="memory-edit-modal" style="display: none;">
+        <div class="memory-edit-content">
+            <div class="memory-edit-header">
+                <h3>编辑长期记忆</h3>
+                <button class="memory-edit-close" onclick="closeMemoryEdit()">×</button>
+            </div>
+            <div class="memory-edit-body">
+                <div class="memory-section">
+                    <h4>基本信息</h4>
+                    <div id="basic-info-editor"></div>
+                </div>
+                <div class="memory-section">
+                    <h4>情感倾向</h4>
+                    <textarea id="emotional-profile-editor" rows="4" placeholder="用户的性格特点、兴趣爱好..."></textarea>
+                </div>
+                <div class="memory-section">
+                    <h4>重要事件</h4>
+                    <div id="events-editor"></div>
+                    <button onclick="addNewEvent()" style="margin-top: 10px; padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        + 添加事件
+                    </button>
+                </div>
+                <div class="memory-section">
+                    <h4>📜 记忆生成历史 <span style="font-size: 12px; color: #999; font-weight: normal;">(最近20次)</span></h4>
+                    <div id="memory-segments-viewer" style="max-height: 300px; overflow-y: auto;">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+            </div>
+            <div class="memory-edit-footer">
+                <button onclick="saveMemoryEdit()" style="padding: 10px 20px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    💾 保存
+                </button>
+                <button onclick="closeMemoryEdit()" style="padding: 10px 20px; background-color: #999; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    取消
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <!-- 确认对话框 -->
     <div class="confirm-dialog" id="confirm-dialog">
         <div class="confirm-dialog-title" id="confirm-title">提示</div>
         <div class="confirm-dialog-message" id="confirm-message">确认执行此操作？</div>
         <div class="confirm-dialog-buttons" id="confirm-buttons">
             <!-- 动态生成按钮 -->
+        </div>
+    </div>
+    
+    <!-- 批量生成对话框 -->
+    <div class="batch-generate-dialog" id="batch-generate-dialog" style="display: none;">
+        <div class="batch-generate-content">
+            <div class="batch-generate-header">
+                <h3>批量生成长期记忆</h3>
+                <button class="batch-generate-close" onclick="closeBatchGenerateDialog()">×</button>
+            </div>
+            <div class="batch-generate-body">
+                <div style="margin-bottom: 20px;">
+                    <p style="color: #666; font-size: 14px; line-height: 1.6;">
+                        检测到您有 <strong id="batch-total-bubbles">0</strong> 个气泡，
+                        <strong id="batch-already-summarized">0</strong> 个已总结，
+                        <strong id="batch-pending-bubbles">0</strong> 个待总结。
+                    </p>
+                </div>
+                
+                <div style="background: #fff3cd; padding: 12px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
+                    <p style="margin: 0; font-size: 13px; color: #856404;">
+                        ⚠️ <strong>提醒：</strong>批量生成将按每 <span id="batch-interval">50</span> 个气泡生成一次记忆，
+                        预计需要调用 <strong id="batch-api-calls">0</strong> 次API，
+                        大约需要 <strong id="batch-estimated-time">0</strong> 分钟。
+                    </p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">选择生成范围：</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <label style="display: flex; align-items: center; cursor: pointer; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; transition: all 0.2s;">
+                            <input type="radio" name="batch-mode" value="pending" checked style="margin-right: 10px;">
+                            <div>
+                                <div style="font-weight: 500;">仅生成待总结部分</div>
+                                <div style="font-size: 12px; color: #666;">只处理新增的未总结气泡（推荐）</div>
+                            </div>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; transition: all 0.2s;">
+                            <input type="radio" name="batch-mode" value="all" style="margin-right: 10px;">
+                            <div>
+                                <div style="font-weight: 500;">从头开始全部重新生成</div>
+                                <div style="font-size: 12px; color: #666;">清空现有记忆，重新分析所有历史记录</div>
+                            </div>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; transition: all 0.2s;">
+                            <input type="radio" name="batch-mode" value="recent" style="margin-right: 10px;">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500;">从最近N条开始生成</div>
+                                <div style="font-size: 12px; color: #666; margin-bottom: 8px;">指定从最近多少条气泡开始重新生成</div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="number" id="batch-recent-count" min="50" max="10000" value="500" style="width: 100px; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <span style="font-size: 13px; color: #666;">条</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <div id="batch-progress" style="display: none; margin-top: 20px;">
+                    <div style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 14px; font-weight: 500;">生成进度</span>
+                        <span style="font-size: 13px; color: #666;" id="batch-progress-text">0 / 0</span>
+                    </div>
+                    <div style="background: #e0e0e0; border-radius: 10px; height: 20px; overflow: hidden;">
+                        <div id="batch-progress-bar" style="background: linear-gradient(90deg, #4CAF50, #8BC34A); height: 100%; width: 0%; transition: width 0.3s;"></div>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 12px; color: #666;" id="batch-current-status">准备中...</div>
+                </div>
+            </div>
+            <div class="batch-generate-footer">
+                <button id="batch-start-btn" onclick="startBatchGenerate()" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">
+                    🚀 开始生成
+                </button>
+                <button onclick="closeBatchGenerateDialog()" style="padding: 10px 20px; background-color: #999; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    取消
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 导入记忆选择对话框 -->
+    <div class="import-memory-dialog" id="import-memory-dialog" style="display: none;">
+        <div class="import-memory-content">
+            <div class="import-memory-header">
+                <h3>导入长期记忆</h3>
+                <button class="import-memory-close" onclick="closeImportMemoryDialog()">×</button>
+            </div>
+            <div class="import-memory-body">
+                <div style="margin-bottom: 20px;">
+                    <p style="color: #666; font-size: 14px; line-height: 1.6;">
+                        检测到导入的记忆文件，请选择导入方式：
+                    </p>
+                </div>
+                
+                <div style="background: #e3f2fd; padding: 12px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #2196F3;">
+                    <p style="margin: 0 0 8px 0; font-weight: 500; color: #1565C0;">📋 导入文件信息：</p>
+                    <p style="margin: 0; font-size: 13px; color: #424242;">
+                        • 基本信息：<span id="import-basic-info-count">0</span> 条<br>
+                        • 重要事件：<span id="import-events-count">0</span> 条<br>
+                        • 最后更新：<span id="import-last-updated">未知</span>
+                    </p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">选择导入方式：</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <label style="display: flex; align-items: flex-start; cursor: pointer; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; transition: all 0.2s;">
+                            <input type="radio" name="import-mode" value="replace" checked style="margin-right: 10px; margin-top: 2px;">
+                            <div>
+                                <div style="font-weight: 500; margin-bottom: 4px;">🔄 覆盖当前记忆</div>
+                                <div style="font-size: 12px; color: #666;">用导入的记忆完全替换现有记忆（当前记忆将丢失）</div>
+                            </div>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; cursor: pointer; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; transition: all 0.2s;">
+                            <input type="radio" name="import-mode" value="merge" style="margin-right: 10px; margin-top: 2px;">
+                            <div>
+                                <div style="font-weight: 500; margin-bottom: 4px;">🔀 合并记忆</div>
+                                <div style="font-size: 12px; color: #666;">智能合并两份记忆（需要调用1次API，约10-20秒）</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <div id="merge-warning" style="display: none; background: #fff3cd; padding: 12px; border-radius: 8px; border-left: 4px solid #ffc107;">
+                    <p style="margin: 0; font-size: 13px; color: #856404;">
+                        ⚠️ 合并模式将调用AI分析两份记忆，智能去重和整合信息。
+                    </p>
+                </div>
+            </div>
+            <div class="import-memory-footer">
+                <button id="import-memory-confirm-btn" onclick="confirmImportMemory()" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">
+                    ✅ 确认导入
+                </button>
+                <button onclick="closeImportMemoryDialog()" style="padding: 10px 20px; background-color: #999; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    取消
+                </button>
+            </div>
         </div>
     </div>
     
@@ -864,6 +1537,20 @@
         // 每个气泡: { id, role, content, timestamp }
         let chatHistory = [];
         let pendingSummaryBubbles = []; // 待总结的气泡缓冲区
+        
+        // ========== 长期记忆 ==========
+        let longTermMemory = {
+            basic_info: {},
+            emotional_profile: "",
+            important_events: [],
+            memory_segments: [], // 新增：记忆片段，每次生成保存一段
+            metadata: {
+                total_messages: 0,
+                last_summary_at: 0,
+                last_updated: null,
+                version: 2  // 版本升级到2
+            }
+        };
         
         // ========== 批量发送相关 ==========
         let pendingUserMessages = []; // 临时队列：存储本轮用户消息的气泡ID
@@ -930,12 +1617,24 @@
             } catch (e) {
                 pendingSummaryBubbles = [];
             }
+            
+            // 加载长期记忆
+            try {
+                const savedMemory = localStorage.getItem('longTermMemory');
+                if (savedMemory) {
+                    longTermMemory = JSON.parse(savedMemory);
+                    console.log('🧠 长期记忆已加载，事件数:', longTermMemory.important_events?.length || 0);
+                }
+            } catch (e) {
+                console.error('❌ 长期记忆加载失败:', e);
+            }
         })();
         
         // 保存到localStorage
         function saveChatHistory() {
             localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
             localStorage.setItem('pendingSummaryBubbles', JSON.stringify(pendingSummaryBubbles));
+            localStorage.setItem('longTermMemory', JSON.stringify(longTermMemory));
         }
         
         // 转换为API格式（合并相邻同role的消息）
@@ -971,6 +1670,30 @@
         const userInput = document.getElementById('user-input');
         const generateBtn = document.getElementById('generate-btn');
         const systemPromptArea = document.getElementById('system-prompt');
+        
+        // 输入框工具按钮（开发中的功能）
+        const voiceBtn = document.getElementById('voice-btn');
+        const emojiBtn = document.getElementById('emoji-btn');
+        const plusBtn = document.getElementById('plus-btn');
+        
+        // 工具按钮点击事件（占位）
+        if (voiceBtn) {
+            voiceBtn.onclick = () => {
+                showToast('语音输入功能开发中...');
+            };
+        }
+        
+        if (emojiBtn) {
+            emojiBtn.onclick = () => {
+                showToast('表情包功能开发中...');
+            };
+        }
+        
+        if (plusBtn) {
+            plusBtn.onclick = () => {
+                showToast('更多功能开发中...');
+            };
+        }
 
         // 播放轻量级音效
         function playSnapSound() {
@@ -1693,9 +2416,29 @@
             const apiTimeout = localStorage.getItem('apiTimeout') || '60';
             document.getElementById('api-timeout').value = apiTimeout;
             
+            // 加载长期记忆设置
+            const autoSummaryInterval = localStorage.getItem('autoSummaryInterval') || '50';
+            document.getElementById('auto-summary-interval').value = autoSummaryInterval;
+            
+            const maxImportantEvents = localStorage.getItem('maxImportantEvents') || '10';
+            document.getElementById('max-important-events').value = maxImportantEvents;
+            
+            // 加载基本信息到输入框
+            document.getElementById('memory-name').value = longTermMemory.basic_info?.姓名 || '';
+            document.getElementById('memory-age').value = longTermMemory.basic_info?.年龄 || '';
+            document.getElementById('memory-occupation').value = longTermMemory.basic_info?.职业 || '';
+            document.getElementById('memory-location').value = longTermMemory.basic_info?.居住地 || '';
+            document.getElementById('memory-appearance').value = longTermMemory.basic_info?.外貌特征 || '';
+            document.getElementById('memory-interests').value = longTermMemory.basic_info?.兴趣爱好 || '';
+            
+            // 更新记忆状态显示
+            updateMemoryStatus();
+            
             console.log('📖 已加载上下文窗口大小:', contextWindowSize);
             console.log('📖 已加载批量等待时间:', batchWaitTime, '秒');
             console.log('📖 已加载API超时时间:', apiTimeout, '秒');
+            console.log('🧠 已加载自动总结间隔:', autoSummaryInterval, '个气泡');
+            console.log('🧠 已加载最大事件数:', maxImportantEvents, '条');
         }
 
         /**
@@ -1849,10 +2592,19 @@
             const apiTimeout = document.getElementById('api-timeout').value;
             localStorage.setItem('apiTimeout', apiTimeout);
             
+            // 保存长期记忆设置
+            const autoSummaryInterval = document.getElementById('auto-summary-interval').value;
+            localStorage.setItem('autoSummaryInterval', autoSummaryInterval);
+            
+            const maxImportantEvents = document.getElementById('max-important-events').value;
+            localStorage.setItem('maxImportantEvents', maxImportantEvents);
+            
             console.log('💾 已保存上下文窗口大小:', contextWindowSize);
             console.log('💾 已保存批量等待时间:', batchWaitTime, '秒');
             console.log('💾 已保存API超时时间:', apiTimeout, '秒');
             console.log('💾 已保存昵称 - 用户:', config.userNickname, 'AI:', config.aiNickname);
+            console.log('🧠 已保存自动总结间隔:', autoSummaryInterval, '个气泡');
+            console.log('🧠 已保存最大事件数:', maxImportantEvents, '条');
             
             // 立即更新聊天页面标题
             document.getElementById('chat-name').textContent = config.aiNickname;
@@ -1976,8 +2728,14 @@
                         chatHistory = importedData; 
                         localStorage.setItem('chatHistory', JSON.stringify(importedData));
                         
+                        // 重置待总结气泡缓冲区
+                        pendingSummaryBubbles = [];
+                        localStorage.setItem('pendingSummaryBubbles', JSON.stringify(pendingSummaryBubbles));
                         
-                        alert('聊天记录导入成功！');
+                        // 更新记忆状态显示
+                        updateMemoryStatus();
+                        
+                        alert('聊天记录导入成功！待总结气泡已重置。');
                         // 刷新或更新聊天 UI
                     } catch (error) {
                         alert('文件解析失败，请确保文件是有效的 JSON 格式。');
@@ -2012,6 +2770,9 @@
                 chatHistory = [];
                 pendingSummaryBubbles = [];
                 saveChatHistory();
+                
+                // 更新记忆状态显示
+                updateMemoryStatus();
                 
                 chatContainer.innerHTML = '';
                 displayMessage("你好！有什么想跟我聊聊的吗？我很期待。", "assistant");
@@ -2378,6 +3139,35 @@
                 const apiMessages = convertToAPIFormat(recentBubbles);
                 
                 let finalSystemPrompt = config.systemPrompt;
+                
+                // 添加长期记忆到系统提示（如果存在）
+                if (longTermMemory && longTermMemory.metadata && longTermMemory.metadata.last_updated) {
+                    let memoryPrompt = '\n\n[长期记忆]：\n';
+                    
+                    // 添加基本信息
+                    if (longTermMemory.basic_info && Object.keys(longTermMemory.basic_info).length > 0) {
+                        memoryPrompt += '用户基本信息：\n';
+                        for (const [key, value] of Object.entries(longTermMemory.basic_info)) {
+                            memoryPrompt += `- ${key}: ${value}\n`;
+                        }
+                    }
+                    
+                    // 添加情感倾向
+                    if (longTermMemory.emotional_profile) {
+                        memoryPrompt += `\n用户性格特点：${longTermMemory.emotional_profile}\n`;
+                    }
+                    
+                    // 添加重要事件（最近5个）
+                    if (longTermMemory.important_events && longTermMemory.important_events.length > 0) {
+                        memoryPrompt += '\n近期重要事件：\n';
+                        longTermMemory.important_events.slice(0, 5).forEach(event => {
+                            memoryPrompt += `- [${event.date}] ${event.event}\n`;
+                        });
+                    }
+                    
+                    finalSystemPrompt += memoryPrompt;
+                }
+                
                 const now = new Date();
                 const currentTimeStr = now.toLocaleString('zh-CN', {
                     year: 'numeric', month: '2-digit', day: '2-digit',
@@ -2784,6 +3574,1075 @@
             // 调用API重新生成
             await callAPIForRegeneration();
         }
+        
+        // ========== 长期记忆功能 ==========
+        
+        /**
+         * 更新记忆状态显示
+         */
+        function updateMemoryStatus() {
+            const autoSummaryInterval = parseInt(localStorage.getItem('autoSummaryInterval')) || 50;
+            const totalBubbles = chatHistory.length;
+            const pendingBubbles = pendingSummaryBubbles.length;
+            const eventsCount = longTermMemory.important_events?.length || 0;
+            const lastSummaryAt = longTermMemory.metadata?.last_summary_at || 0;
+            const lastUpdated = longTermMemory.metadata?.last_updated;
+            
+            // 更新DOM（如果元素存在）
+            const totalEl = document.getElementById('total-bubbles-count');
+            const pendingEl = document.getElementById('pending-bubbles-count');
+            const eventsEl = document.getElementById('events-count');
+            const lastTimeEl = document.getElementById('last-summary-time');
+            const untilNextEl = document.getElementById('bubbles-until-next');
+            
+            if (totalEl) totalEl.textContent = totalBubbles;
+            if (pendingEl) pendingEl.textContent = pendingBubbles;
+            if (eventsEl) eventsEl.textContent = eventsCount;
+            
+            if (lastTimeEl) {
+                if (lastUpdated) {
+                    const date = new Date(lastUpdated);
+                    lastTimeEl.textContent = date.toLocaleString('zh-CN');
+                } else {
+                    lastTimeEl.textContent = '从未';
+                }
+            }
+            
+            if (untilNextEl) {
+                const remaining = autoSummaryInterval - pendingBubbles;
+                if (remaining > 0) {
+                    untilNextEl.textContent = remaining;
+                } else {
+                    untilNextEl.textContent = '已达到，将在下次回复后触发';
+                }
+            }
+        }
+        
+        /**
+         * 生成记忆总结
+         * @param {boolean} manual - 是否为手动触发
+         */
+        async function generateMemorySummary(manual = false) {
+            // 检查是否有待总结的内容
+            if (pendingSummaryBubbles.length === 0) {
+                if (manual) {
+                    alert('当前没有新的对话需要总结！');
+                }
+                return;
+            }
+            
+            // 检查API配置
+            if (!config.baseurl || !config.apikey || !config.modelname) {
+                alert('请先配置API！');
+                return;
+            }
+            
+            if (manual) {
+                if (!confirm(`将总结最近 ${pendingSummaryBubbles.length} 个气泡的内容，生成长期记忆。是否继续？`)) {
+                    return;
+                }
+            }
+            
+            try {
+                // 显示加载提示
+                const loadingMsg = manual ? '正在生成记忆总结，请稍候...' : '后台更新长期记忆...';
+                showToast(loadingMsg);
+                
+                // 准备对话内容
+                const conversationText = pendingSummaryBubbles.map(b => {
+                    const time = new Date(b.timestamp).toLocaleString('zh-CN');
+                    const speaker = b.role === 'user' ? config.userNickname : config.aiNickname;
+                    return `[${time}] ${speaker}: ${b.content}`;
+                }).join('\n\n');
+                
+                // 获取对话时间范围
+                const firstTimestamp = pendingSummaryBubbles[0]?.timestamp;
+                const lastTimestamp = pendingSummaryBubbles[pendingSummaryBubbles.length - 1]?.timestamp;
+                const timeRange = `${new Date(firstTimestamp).toLocaleString('zh-CN')} 至 ${new Date(lastTimestamp).toLocaleString('zh-CN')}`;
+                
+                // 构建总结prompt
+                const summaryPrompt = `请分析以下对话记录，提取长期记忆信息，以JSON格式输出：
+
+对话时间范围：${timeRange}
+
+${longTermMemory.basic_info && Object.keys(longTermMemory.basic_info).length > 0 ? 
+`当前已有的基本信息：
+${JSON.stringify(longTermMemory.basic_info, null, 2)}
+
+当前已有的情感倾向：
+${longTermMemory.emotional_profile || '无'}
+
+当前已有的重要事件：
+${longTermMemory.important_events?.map(e => `[${e.type}] ${e.date}: ${e.event} (重要度:${e.importance})`).join('\n') || '无'}
+` : '这是第一次生成记忆。'}
+
+新对话记录：
+${conversationText}
+
+要求：
+1. basic_info: 提取或更新用户基本信息（姓名、年龄、职业、居住地、外貌特征等），如果有新信息就更新，没有就保留原有的
+2. emotional_profile: 用100-300字总结或更新用户的性格特点、情感倾向、兴趣爱好
+3. important_events: 列出对话中出现的重要事件（最多15个），每个事件包含：
+   - type: 事件类型，必须是以下之一：
+     * "personal" - 个人事件（用户自己的工作、学习、生活等）
+     * "relationship" - 感情事件（与对话者或其他人的关系、互动等）
+   - date: 事件日期（YYYY-MM-DD格式，从消息时间戳提取）
+   - event: 事件描述（20字以内）
+   - importance: 重要程度评分（1-10，10最重要）
+
+重要事件评分标准：
+- 10分：人生重大转折（结婚、生子、重大决定）
+- 8-9分：重要里程碑（升职、毕业、搬家）
+- 6-7分：值得记录的事件（面试、旅行、重要会面）
+- 4-5分：日常重要事项（约会、购物、计划）
+- 1-3分：一般事件
+
+事件类型判断标准：
+- "personal"：主语是用户自己，事件与用户个人相关（"我去了面试"、"我考试通过了"）
+- "relationship"：涉及两人之间的互动、情感（"我们一起去旅行"、"吵架了"、"表白"）
+
+输出格式（纯JSON，不要markdown代码块标记）：
+{
+  "basic_info": {...},
+  "emotional_profile": "...",
+  "important_events": [
+    {
+      "type": "personal" 或 "relationship",
+      "date": "YYYY-MM-DD",
+      "event": "事件描述",
+      "importance": 数字
+    }
+  ]
+}`;
+                
+                // 调用API
+                const response = await fetch(config.baseurl + '/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${config.apikey}`
+                    },
+                    body: JSON.stringify({
+                        model: config.modelname,
+                        messages: [
+                            { role: 'system', content: '你是一个专业的记忆整理助手，擅长提取和总结对话中的关键信息。' },
+                            { role: 'user', content: summaryPrompt }
+                        ],
+                        temperature: 0.3
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.choices && data.choices[0]) {
+                    let aiResponse = data.choices[0].message.content.trim();
+                    
+                    // 移除可能的markdown代码块标记
+                    aiResponse = aiResponse.replace(/^```json\n?/i, '').replace(/\n?```$/i, '');
+                    
+                    // 解析JSON
+                    const newMemory = JSON.parse(aiResponse);
+                    
+                    // 合并记忆
+                    longTermMemory.basic_info = newMemory.basic_info || longTermMemory.basic_info;
+                    longTermMemory.emotional_profile = newMemory.emotional_profile || longTermMemory.emotional_profile;
+                    
+                    // 合并事件列表并去重
+                    if (newMemory.important_events) {
+                        const allEvents = [...(longTermMemory.important_events || []), ...newMemory.important_events];
+                        
+                        // 按重要度排序并保留最重要的N条
+                        const maxEvents = parseInt(localStorage.getItem('maxImportantEvents')) || 10;
+                        longTermMemory.important_events = allEvents
+                            .sort((a, b) => b.importance - a.importance)
+                            .slice(0, maxEvents);
+                    }
+                    
+                    // 保存本次生成的记忆片段（用于追溯和增量更新）
+                    const memorySegment = {
+                        generated_at: new Date().toISOString(),
+                        time_range: {
+                            start: firstTimestamp,
+                            end: lastTimestamp
+                        },
+                        bubbles_count: pendingSummaryBubbles.length,
+                        basic_info_updates: newMemory.basic_info || {},
+                        emotional_profile: newMemory.emotional_profile || "",
+                        events_found: newMemory.important_events || []
+                    };
+                    
+                    // 添加到记忆片段列表
+                    if (!longTermMemory.memory_segments) {
+                        longTermMemory.memory_segments = [];
+                    }
+                    longTermMemory.memory_segments.push(memorySegment);
+                    
+                    // 只保留最近20个片段，避免数据过大
+                    if (longTermMemory.memory_segments.length > 20) {
+                        longTermMemory.memory_segments = longTermMemory.memory_segments.slice(-20);
+                    }
+                    
+                    // 更新元数据
+                    longTermMemory.metadata = {
+                        total_messages: chatHistory.length,
+                        last_summary_at: chatHistory.length,
+                        last_updated: new Date().toISOString(),
+                        version: 2,
+                        segments_count: longTermMemory.memory_segments.length
+                    };
+                    
+                    // 清空待总结缓冲区
+                    pendingSummaryBubbles = [];
+                    
+                    // 保存
+                    saveChatHistory();
+                    
+                    // 更新UI
+                    updateMemoryStatus();
+                    
+                    // 回填基本信息到输入框
+                    fillBasicInfoInputs();
+                    
+                    if (manual) {
+                        showToast('✅ 记忆总结完成！');
+                        alert(`记忆总结成功！\n\n重要事件数：${longTermMemory.important_events?.length || 0} 条`);
+                    } else {
+                        showToast('✅ 长期记忆已更新');
+                    }
+                    
+                    console.log('🧠 长期记忆已更新:', longTermMemory);
+                } else {
+                    throw new Error('API返回格式错误');
+                }
+                
+            } catch (error) {
+                console.error('❌ 生成记忆失败:', error);
+                if (manual) {
+                    alert('生成记忆失败：' + error.message);
+                }
+            }
+        }
+        
+        /**
+         * 检查是否需要自动生成记忆
+         */
+        function checkAutoSummary() {
+            const autoSummaryInterval = parseInt(localStorage.getItem('autoSummaryInterval')) || 50;
+            
+            if (pendingSummaryBubbles.length >= autoSummaryInterval) {
+                console.log('🧠 达到自动总结条件，开始生成记忆...');
+                // 异步执行，不阻塞主流程
+                setTimeout(() => generateMemorySummary(false), 1000);
+            }
+        }
+        
+        /**
+         * 回填基本信息到输入框（从长期记忆中读取）
+         */
+        function fillBasicInfoInputs() {
+            const nameEl = document.getElementById('memory-name');
+            const ageEl = document.getElementById('memory-age');
+            const occupationEl = document.getElementById('memory-occupation');
+            const locationEl = document.getElementById('memory-location');
+            const appearanceEl = document.getElementById('memory-appearance');
+            const interestsEl = document.getElementById('memory-interests');
+            
+            if (nameEl && longTermMemory.basic_info?.姓名) {
+                nameEl.value = longTermMemory.basic_info.姓名;
+            }
+            if (ageEl && longTermMemory.basic_info?.年龄) {
+                ageEl.value = longTermMemory.basic_info.年龄;
+            }
+            if (occupationEl && longTermMemory.basic_info?.职业) {
+                occupationEl.value = longTermMemory.basic_info.职业;
+            }
+            if (locationEl && longTermMemory.basic_info?.居住地) {
+                locationEl.value = longTermMemory.basic_info.居住地;
+            }
+            if (appearanceEl && longTermMemory.basic_info?.外貌特征) {
+                appearanceEl.value = longTermMemory.basic_info.外貌特征;
+            }
+            if (interestsEl && longTermMemory.basic_info?.兴趣爱好) {
+                interestsEl.value = longTermMemory.basic_info.兴趣爱好;
+            }
+        }
+        
+        /**
+         * 保存基本信息
+         */
+        function saveBasicInfo() {
+            const name = document.getElementById('memory-name').value.trim();
+            const age = document.getElementById('memory-age').value.trim();
+            const occupation = document.getElementById('memory-occupation').value.trim();
+            const location = document.getElementById('memory-location').value.trim();
+            const appearance = document.getElementById('memory-appearance').value.trim();
+            const interests = document.getElementById('memory-interests').value.trim();
+            
+            // 更新长期记忆的基本信息
+            if (name) longTermMemory.basic_info.姓名 = name;
+            if (age) longTermMemory.basic_info.年龄 = age;
+            if (occupation) longTermMemory.basic_info.职业 = occupation;
+            if (location) longTermMemory.basic_info.居住地 = location;
+            if (appearance) longTermMemory.basic_info.外貌特征 = appearance;
+            if (interests) longTermMemory.basic_info.兴趣爱好 = interests;
+            
+            // 如果有任何信息被填写，更新元数据
+            if (name || age || occupation || location || appearance || interests) {
+                if (!longTermMemory.metadata.last_updated) {
+                    longTermMemory.metadata.last_updated = new Date().toISOString();
+                }
+            }
+            
+            saveChatHistory();
+            updateMemoryStatus();
+            
+            showToast('✅ 基本信息已保存');
+        }
+        
+        /**
+         * 编辑记忆（打开编辑模态窗口）
+         */
+        function editMemory() {
+            const modal = document.getElementById('memory-edit-modal');
+            
+            // 填充基本信息
+            const basicInfoEditor = document.getElementById('basic-info-editor');
+            const basicInfoFields = [
+                { key: '姓名', placeholder: '例如：小明' },
+                { key: '年龄', placeholder: '例如：25' },
+                { key: '职业', placeholder: '例如：程序员' },
+                { key: '居住地', placeholder: '例如：北京' },
+                { key: '性别', placeholder: '例如：男/女' },
+                { key: '外貌特征', placeholder: '例如：高个子、短发' },
+                { key: '兴趣爱好', placeholder: '例如：编程、游戏' }
+            ];
+            
+            basicInfoEditor.innerHTML = basicInfoFields.map(field => {
+                const value = longTermMemory.basic_info[field.key] || '';
+                return `
+                    <div class="basic-info-item">
+                        <label>${field.key}：</label>
+                        <input type="text" data-key="${field.key}" value="${value}" placeholder="${field.placeholder}">
+                    </div>
+                `;
+            }).join('');
+            
+            // 填充情感倾向
+            document.getElementById('emotional-profile-editor').value = longTermMemory.emotional_profile || '';
+            
+            // 填充重要事件
+            renderEventsEditor();
+            
+            // 填充记忆片段历史
+            renderMemorySegments();
+            
+            // 显示模态窗口
+            modal.style.display = 'flex';
+        }
+        
+        /**
+         * 渲染记忆片段历史
+         */
+        function renderMemorySegments() {
+            const segmentsViewer = document.getElementById('memory-segments-viewer');
+            const segments = longTermMemory.memory_segments || [];
+            
+            if (segments.length === 0) {
+                segmentsViewer.innerHTML = '<p style="color: #999; font-size: 14px; padding: 10px;">暂无记忆生成历史</p>';
+                return;
+            }
+            
+            // 倒序显示（最新的在上面）
+            const reversedSegments = [...segments].reverse();
+            
+            segmentsViewer.innerHTML = reversedSegments.map((segment, index) => {
+                const actualIndex = segments.length - 1 - index;
+                const generatedTime = new Date(segment.generated_at).toLocaleString('zh-CN');
+                const startTime = new Date(segment.time_range.start).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                const endTime = new Date(segment.time_range.end).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                
+                return `
+                    <div style="background: #f9f9f9; border-left: 3px solid #2196F3; padding: 12px; margin-bottom: 10px; border-radius: 4px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong style="color: #333; font-size: 14px;">第 ${segments.length - index} 次生成</strong>
+                            <span style="font-size: 12px; color: #999;">${generatedTime}</span>
+                        </div>
+                        <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                            <div>📅 对话范围: ${startTime} ~ ${endTime}</div>
+                            <div>💬 气泡数量: ${segment.bubbles_count} 个</div>
+                            <div>🎯 发现事件: ${segment.events_found?.length || 0} 个 
+                                ${segment.events_found && segment.events_found.length > 0 ? 
+                                    `<button onclick="showSegmentDetail(${actualIndex})" style="margin-left: 8px; padding: 2px 8px; font-size: 11px; background: #e3f2fd; border: 1px solid #2196F3; border-radius: 3px; cursor: pointer; color: #1976D2;">查看详情</button>` 
+                                    : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        /**
+         * 显示片段详情
+         */
+        function showSegmentDetail(index) {
+            const segment = longTermMemory.memory_segments[index];
+            if (!segment) return;
+            
+            let detail = `=== 第 ${index + 1} 次记忆生成详情 ===\n\n`;
+            detail += `生成时间: ${new Date(segment.generated_at).toLocaleString('zh-CN')}\n`;
+            detail += `对话范围: ${new Date(segment.time_range.start).toLocaleString('zh-CN')} 至 ${new Date(segment.time_range.end).toLocaleString('zh-CN')}\n`;
+            detail += `气泡数量: ${segment.bubbles_count} 个\n\n`;
+            
+            if (segment.basic_info_updates && Object.keys(segment.basic_info_updates).length > 0) {
+                detail += `【基本信息更新】\n`;
+                for (const [key, value] of Object.entries(segment.basic_info_updates)) {
+                    detail += `- ${key}: ${value}\n`;
+                }
+                detail += '\n';
+            }
+            
+            if (segment.emotional_profile) {
+                detail += `【情感倾向】\n${segment.emotional_profile}\n\n`;
+            }
+            
+            if (segment.events_found && segment.events_found.length > 0) {
+                detail += `【发现的事件】\n`;
+                segment.events_found.forEach((event, i) => {
+                    const typeIcon = event.type === 'relationship' ? '❤️' : '👤';
+                    detail += `${i + 1}. ${typeIcon} [${event.date}] ${event.event} (重要度: ${event.importance}/10)\n`;
+                });
+            }
+            
+            alert(detail);
+        }
+        
+        /**
+         * 渲染事件编辑器
+         */
+        function renderEventsEditor() {
+            const eventsEditor = document.getElementById('events-editor');
+            const events = longTermMemory.important_events || [];
+            
+            if (events.length === 0) {
+                eventsEditor.innerHTML = '<p style="color: #999; font-size: 14px;">暂无重要事件</p>';
+                return;
+            }
+            
+            eventsEditor.innerHTML = events.map((event, index) => {
+                const eventType = event.type || 'personal';
+                return `
+                <div class="event-item" data-index="${index}">
+                    <div class="event-item-header">
+                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                            <div>
+                                <label style="font-size: 12px; color: #666;">类型：</label>
+                                <select onchange="updateEventType(${index}, this.value)" style="padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+                                    <option value="personal" ${eventType === 'personal' ? 'selected' : ''}>👤 个人</option>
+                                    <option value="relationship" ${eventType === 'relationship' ? 'selected' : ''}>❤️ 感情</option>
+                                </select>
+                            </div>
+                            <div class="event-item-date">
+                                <label style="font-size: 12px; color: #666;">日期：</label>
+                                <input type="date" value="${event.date}" onchange="updateEventDate(${index}, this.value)" style="padding: 4px; border: 1px solid #ddd; border-radius: 4px;">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <div class="event-item-importance">
+                                <label>重要度：</label>
+                                <input type="number" min="1" max="10" value="${event.importance}" onchange="updateEventImportance(${index}, this.value)">
+                            </div>
+                            <button class="event-item-delete" onclick="deleteEvent(${index})">删除</button>
+                        </div>
+                    </div>
+                    <textarea rows="2" placeholder="事件描述（20字以内）" onchange="updateEventText(${index}, this.value)">${event.event}</textarea>
+                </div>
+            `;
+            }).join('');
+        }
+        
+        /**
+         * 更新事件类型
+         */
+        function updateEventType(index, type) {
+            if (longTermMemory.important_events[index]) {
+                longTermMemory.important_events[index].type = type;
+            }
+        }
+        
+        /**
+         * 更新事件日期
+         */
+        function updateEventDate(index, date) {
+            if (longTermMemory.important_events[index]) {
+                longTermMemory.important_events[index].date = date;
+            }
+        }
+        
+        /**
+         * 更新事件重要度
+         */
+        function updateEventImportance(index, importance) {
+            if (longTermMemory.important_events[index]) {
+                longTermMemory.important_events[index].importance = parseInt(importance) || 5;
+            }
+        }
+        
+        /**
+         * 更新事件文本
+         */
+        function updateEventText(index, text) {
+            if (longTermMemory.important_events[index]) {
+                longTermMemory.important_events[index].event = text;
+            }
+        }
+        
+        /**
+         * 删除事件
+         */
+        function deleteEvent(index) {
+            if (confirm('确定要删除这个事件吗？')) {
+                longTermMemory.important_events.splice(index, 1);
+                renderEventsEditor();
+            }
+        }
+        
+        /**
+         * 添加新事件
+         */
+        function addNewEvent() {
+            const newEvent = {
+                type: 'personal',
+                date: new Date().toISOString().split('T')[0],
+                event: '',
+                importance: 5
+            };
+            
+            if (!longTermMemory.important_events) {
+                longTermMemory.important_events = [];
+            }
+            
+            longTermMemory.important_events.push(newEvent);
+            renderEventsEditor();
+        }
+        
+        /**
+         * 保存记忆编辑
+         */
+        function saveMemoryEdit() {
+            // 保存基本信息
+            const basicInfoInputs = document.querySelectorAll('#basic-info-editor input');
+            basicInfoInputs.forEach(input => {
+                const key = input.getAttribute('data-key');
+                const value = input.value.trim();
+                if (value) {
+                    longTermMemory.basic_info[key] = value;
+                } else {
+                    delete longTermMemory.basic_info[key];
+                }
+            });
+            
+            // 保存情感倾向
+            longTermMemory.emotional_profile = document.getElementById('emotional-profile-editor').value.trim();
+            
+            // 更新元数据
+            longTermMemory.metadata.last_updated = new Date().toISOString();
+            
+            // 保存到本地存储
+            saveChatHistory();
+            updateMemoryStatus();
+            
+            // 关闭模态窗口
+            closeMemoryEdit();
+            
+            showToast('✅ 记忆已保存');
+        }
+        
+        /**
+         * 关闭记忆编辑模态窗口
+         */
+        function closeMemoryEdit() {
+            const modal = document.getElementById('memory-edit-modal');
+            modal.style.display = 'none';
+        }
+        
+        /**
+         * 清空记忆
+         */
+        function clearMemory() {
+            if (!confirm('确定要清空所有长期记忆吗？此操作不可恢复！')) {
+                return;
+            }
+            
+            longTermMemory = {
+                basic_info: {},
+                emotional_profile: "",
+                important_events: [],
+                memory_segments: [],
+                metadata: {
+                    total_messages: 0,
+                    last_summary_at: 0,
+                    last_updated: null,
+                    version: 2,
+                    segments_count: 0
+                }
+            };
+            
+            pendingSummaryBubbles = [];
+            
+            // 同时清空设置页面的基本信息输入框
+            document.getElementById('memory-name').value = '';
+            document.getElementById('memory-age').value = '';
+            document.getElementById('memory-occupation').value = '';
+            document.getElementById('memory-location').value = '';
+            document.getElementById('memory-appearance').value = '';
+            document.getElementById('memory-interests').value = '';
+            
+            saveChatHistory();
+            updateMemoryStatus();
+            
+            alert('长期记忆已清空！');
+        }
+        
+        // ========== 批量生成功能 ==========
+        
+        /**
+         * 显示批量生成对话框
+         */
+        function showBatchGenerateDialog() {
+            const dialog = document.getElementById('batch-generate-dialog');
+            const totalBubbles = chatHistory.length;
+            const alreadySummarized = longTermMemory.metadata?.last_summary_at || 0;
+            const pendingBubbles = pendingSummaryBubbles.length;
+            const interval = parseInt(localStorage.getItem('autoSummaryInterval')) || 50;
+            
+            // 更新统计信息
+            document.getElementById('batch-total-bubbles').textContent = totalBubbles;
+            document.getElementById('batch-already-summarized').textContent = alreadySummarized;
+            document.getElementById('batch-pending-bubbles').textContent = pendingBubbles;
+            document.getElementById('batch-interval').textContent = interval;
+            
+            // 计算默认的API调用次数（仅待总结部分）
+            const defaultApiCalls = Math.ceil(pendingBubbles / interval);
+            document.getElementById('batch-api-calls').textContent = defaultApiCalls;
+            document.getElementById('batch-estimated-time').textContent = Math.ceil(defaultApiCalls * 0.5); // 假设每次30秒
+            
+            // 监听单选按钮变化
+            const radios = document.querySelectorAll('input[name="batch-mode"]');
+            radios.forEach(radio => {
+                radio.onchange = () => updateBatchEstimate();
+            });
+            
+            // 监听最近N条输入框变化
+            const recentCountInput = document.getElementById('batch-recent-count');
+            recentCountInput.oninput = () => {
+                if (document.querySelector('input[name="batch-mode"]:checked').value === 'recent') {
+                    updateBatchEstimate();
+                }
+            };
+            
+            // 重置进度
+            document.getElementById('batch-progress').style.display = 'none';
+            document.getElementById('batch-start-btn').disabled = false;
+            
+            dialog.style.display = 'flex';
+        }
+        
+        /**
+         * 更新批量生成估算
+         */
+        function updateBatchEstimate() {
+            const mode = document.querySelector('input[name="batch-mode"]:checked').value;
+            const interval = parseInt(localStorage.getItem('autoSummaryInterval')) || 50;
+            const totalBubbles = chatHistory.length;
+            const alreadySummarized = longTermMemory.metadata?.last_summary_at || 0;
+            const pendingBubbles = pendingSummaryBubbles.length;
+            
+            let bubblesCount = 0;
+            
+            switch (mode) {
+                case 'pending':
+                    bubblesCount = pendingBubbles;
+                    break;
+                case 'all':
+                    bubblesCount = totalBubbles;
+                    break;
+                case 'recent':
+                    const recentCount = parseInt(document.getElementById('batch-recent-count').value) || 500;
+                    bubblesCount = Math.min(recentCount, totalBubbles);
+                    break;
+            }
+            
+            const apiCalls = Math.ceil(bubblesCount / interval);
+            const estimatedMinutes = Math.ceil(apiCalls * 0.5);
+            
+            document.getElementById('batch-api-calls').textContent = apiCalls;
+            document.getElementById('batch-estimated-time').textContent = estimatedMinutes;
+        }
+        
+        /**
+         * 关闭批量生成对话框
+         */
+        function closeBatchGenerateDialog() {
+            const dialog = document.getElementById('batch-generate-dialog');
+            dialog.style.display = 'none';
+        }
+        
+        /**
+         * 开始批量生成
+         */
+        async function startBatchGenerate() {
+            const mode = document.querySelector('input[name="batch-mode"]:checked').value;
+            const interval = parseInt(localStorage.getItem('autoSummaryInterval')) || 50;
+            
+            // 确定要处理的气泡范围
+            let bubblesToProcess = [];
+            
+            switch (mode) {
+                case 'pending':
+                    // 仅处理待总结的
+                    bubblesToProcess = [...pendingSummaryBubbles];
+                    break;
+                    
+                case 'all':
+                    // 清空现有记忆，从头开始
+                    if (!confirm('此操作将清空现有记忆并重新生成。确定继续吗？')) {
+                        return;
+                    }
+                    longTermMemory = {
+                        basic_info: {},
+                        emotional_profile: "",
+                        important_events: [],
+                        metadata: {
+                            total_messages: 0,
+                            last_summary_at: 0,
+                            last_updated: null,
+                            version: 1
+                        }
+                    };
+                    bubblesToProcess = [...chatHistory];
+                    break;
+                    
+                case 'recent':
+                    // 从最近N条开始
+                    const recentCount = parseInt(document.getElementById('batch-recent-count').value) || 500;
+                    const startIndex = Math.max(0, chatHistory.length - recentCount);
+                    
+                    // 清空现有记忆
+                    if (!confirm(`此操作将清空现有记忆，并从最近 ${recentCount} 条重新生成。确定继续吗？`)) {
+                        return;
+                    }
+                    longTermMemory = {
+                        basic_info: {},
+                        emotional_profile: "",
+                        important_events: [],
+                        metadata: {
+                            total_messages: 0,
+                            last_summary_at: 0,
+                            last_updated: null,
+                            version: 1
+                        }
+                    };
+                    bubblesToProcess = chatHistory.slice(startIndex);
+                    break;
+            }
+            
+            if (bubblesToProcess.length === 0) {
+                alert('没有需要处理的气泡！');
+                return;
+            }
+            
+            // 显示进度
+            const progressDiv = document.getElementById('batch-progress');
+            const progressBar = document.getElementById('batch-progress-bar');
+            const progressText = document.getElementById('batch-progress-text');
+            const statusText = document.getElementById('batch-current-status');
+            const startBtn = document.getElementById('batch-start-btn');
+            
+            progressDiv.style.display = 'block';
+            startBtn.disabled = true;
+            startBtn.textContent = '生成中...';
+            
+            // 分批处理
+            const totalBatches = Math.ceil(bubblesToProcess.length / interval);
+            let successCount = 0;
+            let failCount = 0;
+            
+            for (let i = 0; i < totalBatches; i++) {
+                const start = i * interval;
+                const end = Math.min(start + interval, bubblesToProcess.length);
+                const batch = bubblesToProcess.slice(start, end);
+                
+                // 更新进度
+                const progress = ((i + 1) / totalBatches * 100).toFixed(1);
+                progressBar.style.width = progress + '%';
+                progressText.textContent = `${i + 1} / ${totalBatches}`;
+                statusText.textContent = `正在处理第 ${start + 1}-${end} 个气泡...`;
+                
+                try {
+                    // 临时将batch放入pendingSummaryBubbles
+                    pendingSummaryBubbles = batch;
+                    
+                    // 调用生成函数
+                    await generateMemorySummary(false);
+                    
+                    successCount++;
+                    
+                    // 短暂延迟，避免API限流
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                } catch (error) {
+                    console.error(`❌ 批次 ${i + 1} 生成失败:`, error);
+                    failCount++;
+                }
+            }
+            
+            // 完成
+            progressBar.style.width = '100%';
+            statusText.textContent = `完成！成功: ${successCount}，失败: ${failCount}`;
+            startBtn.textContent = '✅ 生成完成';
+            
+            // 清空待总结缓冲区（因为已经全部处理）
+            pendingSummaryBubbles = [];
+            saveChatHistory();
+            updateMemoryStatus();
+            fillBasicInfoInputs();
+            
+            // 3秒后自动关闭
+            setTimeout(() => {
+                closeBatchGenerateDialog();
+                if (failCount === 0) {
+                    showToast('✅ 批量生成完成！');
+                } else {
+                    alert(`批量生成完成！\n成功: ${successCount}\n失败: ${failCount}`);
+                }
+            }, 3000);
+        }
+        
+        // ========== 长期记忆导入导出 ==========
+        
+        /**
+         * 导出长期记忆
+         */
+        function exportMemory() {
+            if (!longTermMemory.metadata?.last_updated) {
+                alert('当前还没有生成长期记忆！');
+                return;
+            }
+            
+            const memoryData = {
+                version: '1.0',
+                exported_at: new Date().toISOString(),
+                memory: longTermMemory
+            };
+            
+            const dataStr = JSON.stringify(memoryData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `long_term_memory_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showToast('✅ 记忆已导出');
+        }
+        
+        /**
+         * 导入记忆文件选择处理
+         */
+        let importedMemoryData = null;
+        
+        document.getElementById('import-memory-file').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (file.type !== "application/json") {
+                alert('请选择JSON文件！');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // 验证文件格式
+                    if (!data.memory || !data.memory.metadata) {
+                        alert('文件格式不正确，请选择有效的长期记忆文件！');
+                        return;
+                    }
+                    
+                    importedMemoryData = data.memory;
+                    showImportMemoryDialog(data.memory);
+                    
+                } catch (error) {
+                    alert('文件解析失败：' + error.message);
+                }
+            };
+            
+            reader.readAsText(file);
+            
+            // 重置文件选择，允许重复选择同一文件
+            event.target.value = '';
+        });
+        
+        /**
+         * 显示导入记忆对话框
+         */
+        function showImportMemoryDialog(memory) {
+            const dialog = document.getElementById('import-memory-dialog');
+            
+            // 填充文件信息
+            const basicInfoCount = Object.keys(memory.basic_info || {}).length;
+            const eventsCount = (memory.important_events || []).length;
+            const lastUpdated = memory.metadata?.last_updated 
+                ? new Date(memory.metadata.last_updated).toLocaleString('zh-CN')
+                : '未知';
+            
+            document.getElementById('import-basic-info-count').textContent = basicInfoCount;
+            document.getElementById('import-events-count').textContent = eventsCount;
+            document.getElementById('import-last-updated').textContent = lastUpdated;
+            
+            // 监听导入模式变化
+            const radios = document.querySelectorAll('input[name="import-mode"]');
+            const mergeWarning = document.getElementById('merge-warning');
+            
+            radios.forEach(radio => {
+                radio.onchange = () => {
+                    if (radio.value === 'merge') {
+                        mergeWarning.style.display = 'block';
+                    } else {
+                        mergeWarning.style.display = 'none';
+                    }
+                };
+            });
+            
+            // 初始状态
+            mergeWarning.style.display = 'none';
+            
+            dialog.style.display = 'flex';
+        }
+        
+        /**
+         * 关闭导入记忆对话框
+         */
+        function closeImportMemoryDialog() {
+            const dialog = document.getElementById('import-memory-dialog');
+            dialog.style.display = 'none';
+            importedMemoryData = null;
+        }
+        
+        /**
+         * 确认导入记忆
+         */
+        async function confirmImportMemory() {
+            if (!importedMemoryData) {
+                alert('没有可导入的数据！');
+                return;
+            }
+            
+            const mode = document.querySelector('input[name="import-mode"]:checked').value;
+            const confirmBtn = document.getElementById('import-memory-confirm-btn');
+            
+            if (mode === 'replace') {
+                // 覆盖模式：直接替换
+                if (!confirm('确定要用导入的记忆覆盖当前记忆吗？当前记忆将丢失！')) {
+                    return;
+                }
+                
+                longTermMemory = importedMemoryData;
+                saveChatHistory();
+                updateMemoryStatus();
+                fillBasicInfoInputs();
+                
+                closeImportMemoryDialog();
+                showToast('✅ 记忆已导入');
+                
+            } else if (mode === 'merge') {
+                // 合并模式：调用API智能合并
+                if (!config.baseurl || !config.apikey) {
+                    alert('请先配置API！');
+                    return;
+                }
+                
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = '合并中...';
+                
+                try {
+                    const mergePrompt = `请智能合并以下两份长期记忆，去除重复信息，保留所有有价值的内容：
+
+【当前记忆】
+${JSON.stringify(longTermMemory, null, 2)}
+
+【导入的记忆】
+${JSON.stringify(importedMemoryData, null, 2)}
+
+要求：
+1. basic_info: 合并基本信息，优先保留更完整的信息
+2. emotional_profile: 合并两份情感倾向描述，形成更全面的总结（100-300字）
+3. important_events: 合并重要事件列表，去除重复，按重要度排序，保留最重要的${localStorage.getItem('maxImportantEvents') || 10}条
+
+输出格式（纯JSON，不要markdown代码块）：
+{
+  "basic_info": {...},
+  "emotional_profile": "...",
+  "important_events": [...]
+}`;
+
+                    const response = await fetch(config.baseurl + '/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${config.apikey}`
+                        },
+                        body: JSON.stringify({
+                            model: config.modelname,
+                            messages: [
+                                { role: 'system', content: '你是一个专业的记忆整理助手。' },
+                                { role: 'user', content: mergePrompt }
+                            ],
+                            temperature: 0.3
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.choices && data.choices[0]) {
+                        let aiResponse = data.choices[0].message.content.trim();
+                        
+                        // 移除可能的markdown代码块标记
+                        aiResponse = aiResponse.replace(/^```json\n?/i, '').replace(/\n?```$/i, '');
+                        
+                        // 解析JSON
+                        const mergedMemory = JSON.parse(aiResponse);
+                        
+                        // 更新长期记忆
+                        longTermMemory.basic_info = mergedMemory.basic_info || longTermMemory.basic_info;
+                        longTermMemory.emotional_profile = mergedMemory.emotional_profile || longTermMemory.emotional_profile;
+                        longTermMemory.important_events = mergedMemory.important_events || longTermMemory.important_events;
+                        longTermMemory.metadata.last_updated = new Date().toISOString();
+                        
+                        saveChatHistory();
+                        updateMemoryStatus();
+                        fillBasicInfoInputs();
+                        
+                        closeImportMemoryDialog();
+                        showToast('✅ 记忆已智能合并');
+                        
+                    } else {
+                        throw new Error('API返回格式错误');
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ 合并失败:', error);
+                    alert('合并失败：' + error.message);
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = '✅ 确认导入';
+                }
+            }
+        }
+        
         // ====================================
 
         /**
@@ -3006,6 +4865,9 @@
                 isWaitingForAI = false;
                 console.log('✅ AI回复完成，等待状态已重置');
                 
+                // 检查是否需要自动生成记忆
+                checkAutoSummary();
+                
                 // 检查是否有待发送的消息
                 if (pendingUserMessages.length > 0) {
                     if (hasReachedWaitTime) {
@@ -3165,6 +5027,34 @@
 
             // E. 构建最终的 Messages 列表
             let finalSystemPrompt = config.systemPrompt;
+            
+            // 添加长期记忆到系统提示（如果存在）
+            if (longTermMemory && longTermMemory.metadata && longTermMemory.metadata.last_updated) {
+                let memoryPrompt = '\n\n[长期记忆]：\n';
+                
+                // 添加基本信息
+                if (longTermMemory.basic_info && Object.keys(longTermMemory.basic_info).length > 0) {
+                    memoryPrompt += '用户基本信息：\n';
+                    for (const [key, value] of Object.entries(longTermMemory.basic_info)) {
+                        memoryPrompt += `- ${key}: ${value}\n`;
+                    }
+                }
+                
+                // 添加情感倾向
+                if (longTermMemory.emotional_profile) {
+                    memoryPrompt += `\n用户性格特点：${longTermMemory.emotional_profile}\n`;
+                }
+                
+                // 添加重要事件（最近5个）
+                if (longTermMemory.important_events && longTermMemory.important_events.length > 0) {
+                    memoryPrompt += '\n近期重要事件：\n';
+                    longTermMemory.important_events.slice(0, 5).forEach(event => {
+                        memoryPrompt += `- [${event.date}] ${event.event}\n`;
+                    });
+                }
+                
+                finalSystemPrompt += memoryPrompt;
+            }
             
             // 添加当前时间信息到系统提示
             const now = new Date();
