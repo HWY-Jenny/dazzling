@@ -114,15 +114,16 @@
 
         .message {
             display: flex;
+            flex-direction: column; /* 垂直布局 */
             margin-bottom: 5px;
         }
 
         .message.user {
-            justify-content: flex-end;
+            align-items: flex-end; /* 用户消息右对齐 */
         }
 
         .message.assistant {
-            justify-content: flex-start;
+            align-items: flex-start; /* AI消息左对齐 */
         }
 
         .bubble {
@@ -941,31 +942,57 @@
         }
         
         /* ========== 引用样式 ========== */
-        /* 输入框上方的引用预览 */
+        /* 输入框上方的引用预览 - 微信风格 */
         .quote-reference {
-            background: #f0f0f0;
-            border-left: 3px solid #007AFF;
-            padding: 8px 12px;
-            margin: 0 10px 8px 10px;
-            border-radius: 4px;
-            font-size: 13px;
-            color: #666;
+            display: none; /* 默认隐藏 */
+            position: fixed;
+            bottom: 52px; /* 在输入区域上方,根据实际输入区高度调整 */
+            left: 0;
+            right: 0;
+            background: #f7f7f7;
+            border-top: 1px solid #d0d0d0;
+            padding: 10px 12px;
+            z-index: 999;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .quote-reference.active {
+            display: block;
+        }
+        
+        .quote-reference-inner {
             display: flex;
             align-items: flex-start;
             gap: 8px;
         }
         
-        .quote-reference .quote-icon {
-            font-size: 16px;
+        .quote-reference .quote-bar {
+            width: 3px;
+            min-height: 45px;
+            background-color: #07c160;
+            border-radius: 2px;
             flex-shrink: 0;
         }
         
+        .quote-reference .quote-content-wrapper {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .quote-reference .quote-sender {
+            font-size: 13px;
+            font-weight: 500;
+            color: #576b95;
+            margin-bottom: 3px;
+        }
+        
         .quote-reference .quote-content {
-            flex-grow: 1;
+            font-size: 13px;
+            color: #666;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             line-height: 1.4;
         }
@@ -973,32 +1000,41 @@
         .quote-reference .quote-close {
             flex-shrink: 0;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 20px;
             color: #999;
             line-height: 1;
-            padding: 0 4px;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: none;
+            border: none;
         }
         
         .quote-reference .quote-close:hover {
-            color: #333;
+            background-color: #e0e0e0;
         }
         
-        /* 消息气泡内的引用样式 (微信风格) */
-        .quoted-message {
+        /* 消息气泡外的引用样式 (微信风格，在气泡上方) */
+        .message .quoted-message {
             background: rgba(0, 0, 0, 0.05);
             border-left: 3px solid rgba(0, 0, 0, 0.2);
             padding: 6px 10px;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             border-radius: 4px;
-            font-size: 13px;
+            font-size: 12px;
             color: #666;
             line-height: 1.4;
-            max-height: 60px;
+            max-width: 75%;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
+            align-self: flex-start; /* 默认左对齐 */
         }
         
         .quoted-message .quote-sender {
@@ -1007,14 +1043,18 @@
             margin-right: 4px;
         }
         
+        /* 用户消息的引用右对齐 */
         .message.user .quoted-message {
             background: rgba(0, 0, 0, 0.08);
             border-left-color: rgba(0, 0, 0, 0.3);
+            align-self: flex-end; /* 右对齐 */
         }
         
+        /* AI消息的引用左对齐 */
         .message.assistant .quoted-message {
             background: rgba(0, 0, 0, 0.03);
             border-left-color: rgba(0, 0, 0, 0.15);
+            align-self: flex-start; /* 左对齐 */
         }
     </style>
 </head>
@@ -1052,6 +1092,18 @@
                     <div class="message ai">
                         <div class="bubble">你好！有什么想跟我聊聊的吗？我很期待。</div>
                     </div>
+                </div>
+            </div>
+
+            <!-- 引用预览区域 (固定在输入框上方) -->
+            <div class="quote-reference" id="quote-preview">
+                <div class="quote-reference-inner">
+                    <div class="quote-bar"></div>
+                    <div class="quote-content-wrapper">
+                        <div class="quote-sender" id="quote-sender"></div>
+                        <div class="quote-content" id="quote-content"></div>
+                    </div>
+                    <button class="quote-close" onclick="clearQuote()">×</button>
                 </div>
             </div>
 
@@ -3243,29 +3295,19 @@
          * 显示引用预览
          */
         function showQuotePreview(bubble) {
-            const inputArea = document.getElementById('chat-input-area');
-            
-            // 移除已有的引用预览
-            const existingQuote = inputArea.querySelector('.quote-reference');
-            if (existingQuote) {
-                existingQuote.remove();
-            }
+            const quotePreview = document.getElementById('quote-preview');
+            const quoteSender = document.getElementById('quote-sender');
+            const quoteContent = document.getElementById('quote-content');
             
             // 获取发送者昵称
             const senderName = bubble.role === 'user' ? config.userNickname : config.aiNickname;
             
-            // 创建引用预览元素
-            const quoteDiv = document.createElement('div');
-            quoteDiv.classList.add('quote-reference');
-            quoteDiv.innerHTML = `
-                <span class="quote-icon">💬</span>
-                <div class="quote-content"><strong>${escapeHtml(senderName)}:</strong> ${escapeHtml(bubble.content)}</div>
-                <span class="quote-close" onclick="clearQuote()">×</span>
-            `;
+            // 设置引用内容
+            quoteSender.textContent = senderName;
+            quoteContent.textContent = bubble.content;
             
-            // 添加到输入区域顶部 (textarea之前)
-            const textarea = inputArea.querySelector('#user-input');
-            inputArea.insertBefore(quoteDiv, textarea);
+            // 显示引用预览
+            quotePreview.classList.add('active');
         }
         
         /**
@@ -3273,10 +3315,9 @@
          */
         function clearQuote() {
             currentQuote = null;
-            const inputArea = document.getElementById('chat-input-area');
-            const quoteDiv = inputArea.querySelector('.quote-reference');
-            if (quoteDiv) {
-                quoteDiv.remove();
+            const quotePreview = document.getElementById('quote-preview');
+            if (quotePreview) {
+                quotePreview.classList.remove('active');
             }
         }
         
@@ -3466,10 +3507,19 @@
             const metaDiv = bubbleDiv.querySelector('.message-meta');
             const metaHtml = metaDiv ? metaDiv.outerHTML : '';
             
+            // 获取消息容器
+            const messageDiv = chatContainer.querySelector(`[data-bubble-id="${bubble.id}"]`);
+            
             // 清空并重建内容
             bubbleDiv.innerHTML = '';
             
-            // 如果有引用，先添加引用部分
+            // 移除已存在的引用块
+            const existingQuote = messageDiv.querySelector('.quoted-message');
+            if (existingQuote) {
+                existingQuote.remove();
+            }
+            
+            // 如果有引用，添加到消息容器中（气泡外部上方）
             if (quotedText && quotedSender) {
                 const quotedDiv = document.createElement('div');
                 quotedDiv.classList.add('quoted-message');
@@ -3481,7 +3531,8 @@
                 quotedDiv.appendChild(senderSpan);
                 quotedDiv.appendChild(document.createTextNode(' ' + quotedText));
                 
-                bubbleDiv.appendChild(quotedDiv);
+                // 插入到气泡之前
+                messageDiv.insertBefore(quotedDiv, bubbleDiv);
             }
             
             // 添加主要文本
@@ -3532,7 +3583,13 @@
                 // 清空并重建内容
                 bubbleDiv.innerHTML = '';
                 
-                // 如果有引用，先添加引用部分
+                // 移除已存在的引用块
+                const existingQuote = messageDiv.querySelector('.quoted-message');
+                if (existingQuote) {
+                    existingQuote.remove();
+                }
+                
+                // 如果有引用，添加到消息容器中（气泡外部上方）
                 if (quotedText && quotedSender) {
                     const quotedDiv = document.createElement('div');
                     quotedDiv.classList.add('quoted-message');
@@ -3544,7 +3601,8 @@
                     quotedDiv.appendChild(senderSpan);
                     quotedDiv.appendChild(document.createTextNode(' ' + quotedText));
                     
-                    bubbleDiv.appendChild(quotedDiv);
+                    // 插入到气泡之前
+                    messageDiv.insertBefore(quotedDiv, bubbleDiv);
                 }
                 
                 // 添加主要文本
@@ -4776,21 +4834,33 @@ ${JSON.stringify(importedMemoryData, null, 2)}
          * @param {boolean} saveToHistory - 是否保存到chatHistory（默认true）
          * @returns {object} 返回创建的气泡对象
          */
-        function displayMessage(text, role, status = 0, timestamp = null, saveToHistory = true, existingId = null, skipScroll = false) {
+        function displayMessage(text, role, status = 0, timestamp = null, saveToHistory = true, existingId = null, skipScroll = false, quoteInfo = null) {
             // 生成时间戳
             const fullTimestamp = timestamp || new Date().toISOString();
             // 生成唯一ID
             const bubbleId = existingId || ('bubble_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9));
             
-            // 检测并解析引用
+            // 处理引用信息
             let quotedText = null;
             let quotedSender = null;
             let mainText = text;
-            const quoteMatch = text.match(/^\[引用: "(.+?): (.+?)"\]\n\n([\s\S]+)$/);
-            if (quoteMatch) {
-                quotedSender = quoteMatch[1];
-                quotedText = quoteMatch[2];
-                mainText = quoteMatch[3];
+            
+            // 如果传入了quoteInfo参数,使用它
+            if (quoteInfo) {
+                quotedSender = quoteInfo.sender;
+                quotedText = quoteInfo.content;
+                mainText = text;
+                
+                // 为了保持向后兼容,也保存引用格式到文本中(用于API和历史记录)
+                text = `[引用: "${quotedSender}: ${quotedText.substring(0, 50)}${quotedText.length > 50 ? '...' : ''}"]\n\n${text}`;
+            } else {
+                // 如果没有quoteInfo,检测文本中是否包含旧格式的引用
+                const quoteMatch = text.match(/^\[引用: "(.+?): (.+?)"\]\n\n([\s\S]+)$/);
+                if (quoteMatch) {
+                    quotedSender = quoteMatch[1];
+                    quotedText = quoteMatch[2];
+                    mainText = quoteMatch[3];
+                }
             }
             
             // 创建气泡对象 (保存原始带引用的文本)
@@ -4813,10 +4883,7 @@ ${JSON.stringify(importedMemoryData, null, 2)}
             messageDiv.classList.add('message', role);
             messageDiv.dataset.bubbleId = bubble.id; // 保存气泡ID
 
-            const bubbleDiv = document.createElement('div');
-            bubbleDiv.classList.add('bubble');
-            
-            // 如果有引用，先添加引用部分
+            // 如果有引用，添加引用块（在气泡外部、messageDiv内部）
             if (quotedText && quotedSender) {
                 const quotedDiv = document.createElement('div');
                 quotedDiv.classList.add('quoted-message');
@@ -4828,10 +4895,13 @@ ${JSON.stringify(importedMemoryData, null, 2)}
                 quotedDiv.appendChild(senderSpan);
                 quotedDiv.appendChild(document.createTextNode(' ' + quotedText));
                 
-                bubbleDiv.appendChild(quotedDiv);
+                messageDiv.appendChild(quotedDiv);
             }
+
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.classList.add('bubble');
             
-            // 添加主要文本
+            // 添加主要文本（不再在气泡内添加引用）
             const mainTextNode = document.createTextNode(mainText);
             bubbleDiv.appendChild(mainTextNode);
             
@@ -5304,32 +5374,37 @@ ${JSON.stringify(importedMemoryData, null, 2)}
 
             // 检查配置
             if (!config.baseurl || !config.apikey) {
-                alert('请先在设置中填写 Base URL 和 API Key！');
+                alert('请先在设置中填写 Base URL 和 API Key!');
                 return;
             }
             
-            // 如果有引用，添加引用信息到消息前面
+            // 保存引用信息
+            let quoteInfo = null;
             if (currentQuote) {
                 const senderName = currentQuote.role === 'user' ? config.userNickname : config.aiNickname;
-                const quotePrefix = `[引用: "${senderName}: ${currentQuote.content.substring(0, 50)}${currentQuote.content.length > 50 ? '...' : ''}"]\n\n`;
-                userMessage = quotePrefix + userMessage;
-                
-                // 清除引用
-                clearQuote();
+                quoteInfo = {
+                    sender: senderName,
+                    content: currentQuote.content
+                };
             }
 
-            // 1. 显示用户消息（单勾）
-            const bubble = displayMessage(userMessage, 'user', 1);
+            // 1. 显示用户消息(如果有引用,传递引用信息)
+            const bubble = displayMessage(userMessage, 'user', 1, null, true, null, false, quoteInfo);
             
-            // 2. 清空输入框
+            // 2. 清除引用预览
+            if (currentQuote) {
+                clearQuote();
+            }
+            
+            // 3. 清空输入框
             userInput.value = '';
             updateSendButtonState();
             
-            // 3. 将此气泡ID加入待发送队列
+            // 4. 将此气泡ID加入待发送队列
             pendingUserMessages.push(bubble.id);
             console.log('📝 添加到队列:', bubble.id, '当前队列长度:', pendingUserMessages.length);
             
-            // 4. 启动/重启计时器
+            // 5. 启动/重启计时器
             startBatchTimer();
         };
         /**
