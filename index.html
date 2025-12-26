@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI私聊 - 仿微信界面</title>
+    <title>Dazzling</title>
     <style>
         /* 移动端基础样式 */
         body {
@@ -114,16 +114,22 @@
 
         .message {
             display: flex;
-            flex-direction: column; /* 垂直布局 */
+            flex-direction: row; /* 横向布局:头像和内容左右排列 */
             margin-bottom: 5px;
+            gap: 8px;
         }
 
         .message.user {
-            align-items: flex-end; /* 用户消息右对齐 */
+            justify-content: flex-end; /* 用户消息右对齐 */
         }
 
         .message.assistant {
-            align-items: flex-start; /* AI消息左对齐 */
+            justify-content: flex-start; /* AI消息左对齐 */
+        }
+        
+        /* 用户消息:头像在右侧 */
+        .message.user {
+            flex-direction: row-reverse;
         }
 
         .bubble {
@@ -412,6 +418,245 @@
         .page.active {
             display: flex;
             flex-direction: column;
+        }
+        
+        /* ========== 头像样式 ========== */
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        
+        .message.user {
+            flex-direction: row;
+        }
+        
+        .message.assistant {
+            flex-direction: row;
+        }
+        
+        .message.user .message-avatar {
+            order: 2;
+            margin-left: 8px;
+        }
+        
+        .message.assistant .message-avatar {
+            order: 0;
+            margin-right: 8px;
+        }
+        
+        .message.user .bubble {
+            order: 1;
+        }
+        
+        .message.assistant .bubble {
+            order: 1;
+        }
+        
+        .default-avatar {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            border-radius: 6px;
+        }
+        
+        .default-avatar.ai {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .default-avatar.user {
+            background: linear-gradient(135deg, #07c160 0%, #06ae56 100%);
+        }
+        
+        .avatar-preview-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        
+        .avatar-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #e7e7e7;
+            flex-shrink: 0;
+        }
+        
+        .avatar-preview.small {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .avatar-upload-btn {
+            padding: 8px 16px;
+            background: #07c160;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .avatar-upload-btn:active {
+            opacity: 0.8;
+        }
+        
+        .avatar-remove-btn {
+            padding: 8px 16px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .avatar-remove-btn:active {
+            opacity: 0.8;
+        }
+        
+        /* ========== 聊天列表样式 ========== */
+        .character-list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e7e7e7;
+            cursor: pointer;
+            background: #fff;
+        }
+        .character-list-item:active {
+            background-color: #ececec;
+        }
+        .character-list-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .character-list-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .character-list-name {
+            font-size: 16px;
+            font-weight: 500;
+            color: #000;
+            margin-bottom: 4px;
+        }
+        .character-list-preview {
+            font-size: 14px;
+            color: #999;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .character-add-menu {
+            position: fixed;
+            top: 50px;
+            right: 10px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 9999;
+            min-width: 140px;
+            display: none;
+        }
+        .character-add-menu.active {
+            display: block;
+        }
+        .character-add-menu-item {
+            padding: 14px 20px;
+            border-bottom: 1px solid #e7e7e7;
+            cursor: pointer;
+            font-size: 15px;
+            color: #000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .character-add-menu-item:last-child {
+            border-bottom: none;
+        }
+        .character-add-menu-item:active {
+            background-color: #ececec;
+        }
+        .character-new-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        .character-new-modal.active {
+            display: flex;
+        }
+        .character-new-modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 85%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow: hidden;
+        }
+        .character-new-modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e7e7e7;
+            font-size: 17px;
+            font-weight: 500;
+            text-align: center;
+        }
+        .character-new-modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+        .character-new-modal-footer {
+            padding: 12px 20px;
+            border-top: 1px solid #e7e7e7;
+            display: flex;
+            gap: 12px;
+        }
+        .character-new-modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .character-new-modal-btn.cancel {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .character-new-modal-btn.confirm {
+            background: #07c160;
+            color: white;
+        }
+        .character-empty-list {
+            text-align: center;
+            padding: 80px 20px;
+            color: #999;
         }
         
         /* ========== 长按菜单样式 ========== */
@@ -942,57 +1187,31 @@
         }
         
         /* ========== 引用样式 ========== */
-        /* 输入框上方的引用预览 - 微信风格 */
+        /* 输入框上方的引用预览 */
         .quote-reference {
-            display: none; /* 默认隐藏 */
-            position: fixed;
-            bottom: 52px; /* 在输入区域上方,根据实际输入区高度调整 */
-            left: 0;
-            right: 0;
-            background: #f7f7f7;
-            border-top: 1px solid #d0d0d0;
-            padding: 10px 12px;
-            z-index: 999;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
-        }
-        
-        .quote-reference.active {
-            display: block;
-        }
-        
-        .quote-reference-inner {
+            background: #f0f0f0;
+            border-left: 3px solid #007AFF;
+            padding: 8px 12px;
+            margin: 0 10px 8px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #666;
             display: flex;
             align-items: flex-start;
             gap: 8px;
         }
         
-        .quote-reference .quote-bar {
-            width: 3px;
-            min-height: 45px;
-            background-color: #07c160;
-            border-radius: 2px;
+        .quote-reference .quote-icon {
+            font-size: 16px;
             flex-shrink: 0;
         }
         
-        .quote-reference .quote-content-wrapper {
-            flex: 1;
-            min-width: 0;
-        }
-        
-        .quote-reference .quote-sender {
-            font-size: 13px;
-            font-weight: 500;
-            color: #576b95;
-            margin-bottom: 3px;
-        }
-        
         .quote-reference .quote-content {
-            font-size: 13px;
-            color: #666;
+            flex-grow: 1;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             line-height: 1.4;
         }
@@ -1000,26 +1219,18 @@
         .quote-reference .quote-close {
             flex-shrink: 0;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 18px;
             color: #999;
             line-height: 1;
-            padding: 0;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: none;
-            border: none;
+            padding: 0 4px;
         }
         
         .quote-reference .quote-close:hover {
-            background-color: #e0e0e0;
+            color: #333;
         }
         
-        /* 消息气泡外的引用样式 (微信风格，在气泡上方) */
-        .message .quoted-message {
+        /* 消息气泡内的引用样式 (微信风格) */
+        .quoted-message {
             background: rgba(0, 0, 0, 0.05);
             border-left: 3px solid rgba(0, 0, 0, 0.2);
             padding: 6px 10px;
@@ -1028,13 +1239,13 @@
             font-size: 12px;
             color: #666;
             line-height: 1.4;
-            max-width: 75%;
+            width: 100%; /* 占满contentWrapper宽度 */
+            box-sizing: border-box;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
-            align-self: flex-start; /* 默认左对齐 */
         }
         
         .quoted-message .quote-sender {
@@ -1043,18 +1254,14 @@
             margin-right: 4px;
         }
         
-        /* 用户消息的引用右对齐 */
         .message.user .quoted-message {
             background: rgba(0, 0, 0, 0.08);
             border-left-color: rgba(0, 0, 0, 0.3);
-            align-self: flex-end; /* 右对齐 */
         }
         
-        /* AI消息的引用左对齐 */
         .message.assistant .quoted-message {
             background: rgba(0, 0, 0, 0.03);
             border-left-color: rgba(0, 0, 0, 0.15);
-            align-self: flex-start; /* 左对齐 */
         }
     </style>
 </head>
@@ -1079,9 +1286,73 @@
             </div>
         </div>
 
+        <!-- ==================== 系统设置页面 ==================== -->
+        <div id="system-settings-page" class="page">
+            <header class="header">
+                <button onclick="showPage('home-page')">‹</button>
+                <span class="header-title">系统设置</span>
+                <span></span>
+            </header>
+            
+            <div class="content" style="padding: 20px; background-color: #f5f5f5;">
+                <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #333;">📦 数据管理</h2>
+                    <p style="font-size: 14px; color: #666; margin: 0 0 20px 0;">
+                        导出或导入所有数据，包括所有角色的聊天记录、配置和长期记忆。
+                    </p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button onclick="exportAllData()" style="padding: 14px; background-color: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 500;">
+                            💾 导出所有数据
+                        </button>
+                        
+                        <button onclick="document.getElementById('import-all-data-input').click()" style="padding: 14px; background-color: #2196F3; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 500;">
+                            📥 导入所有数据
+                        </button>
+                        <input type="file" id="import-all-data-input" accept=".json" style="display: none;" onchange="importAllData(this)">
+                    </div>
+                    
+                    <div style="margin-top: 16px; padding: 12px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196F3;">
+                        <p style="margin: 0; font-size: 13px; color: #1565C0;">
+                            💡 <strong>提示：</strong>导出的数据包含所有角色、聊天记录、配置和记忆。导入时会完全替换当前所有数据。
+                        </p>
+                    </div>
+                </div>
+                
+                <div style="background: #fff3cd; border-radius: 12px; padding: 20px; border-left: 4px solid #ffc107;">
+                    <h3 style="margin: 0 0 10px 0; font-size: 16px; color: #856404;">⚠️ 注意事项</h3>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #856404; line-height: 1.8;">
+                        <li>导入数据会<strong>完全替换</strong>当前所有数据</li>
+                        <li>建议在导入前先导出备份当前数据</li>
+                        <li>导入后页面会自动刷新</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 聊天列表页面 ==================== -->
+        <div id="chat-list-page" class="page">
+            <header class="header">
+                <button onclick="showPage('home-page')">‹</button>
+                <span class="header-title">微信</span>
+                <button id="add-character-menu-btn">+</button>
+            </header>
+            
+            <div class="content" style="background-color: #fff;">
+                <div style="background-color: #EDEDED; padding: 8px 12px; border-bottom: 1px solid #d9d9d9;">
+                    <div style="background-color: #fff; border-radius: 6px; padding: 6px 12px; display: flex; align-items: center; gap: 8px;">
+                        <span>🔍</span>
+                        <input type="text" placeholder="搜索" id="character-search-input" style="border: none; outline: none; flex: 1; font-size: 14px; background: transparent;">
+                    </div>
+                </div>
+                
+                <div id="characters-list-container"></div>
+            </div>
+        </div>
+
         <div id="chat-page" class="page">
             <header class="header">
-                <button onclick="showPage('home-page', document.querySelector('.nav-item:nth-child(1)'))">⌂</button>
+                <button id="back-to-chat-list-btn">‹</button>
                 <button onclick="clearChat()">🗑️</button>
                 <span class="header-title" id="chat-name">AI 聊天对象</span>
                 <button onclick="openSettings()">⚙️</button>
@@ -1092,18 +1363,6 @@
                     <div class="message ai">
                         <div class="bubble">你好！有什么想跟我聊聊的吗？我很期待。</div>
                     </div>
-                </div>
-            </div>
-
-            <!-- 引用预览区域 (固定在输入框上方) -->
-            <div class="quote-reference" id="quote-preview">
-                <div class="quote-reference-inner">
-                    <div class="quote-bar"></div>
-                    <div class="quote-content-wrapper">
-                        <div class="quote-sender" id="quote-sender"></div>
-                        <div class="quote-content" id="quote-content"></div>
-                    </div>
-                    <button class="quote-close" onclick="clearQuote()">×</button>
                 </div>
             </div>
 
@@ -1142,6 +1401,13 @@
                 <span class="header-title">设置</span>
                 <span></span> </header>
             <div class="content" style="padding: 20px; overflow-y: auto; flex-grow: 1;">
+                <!-- 角色标识 -->
+                <div style="background: #f5f5f5; padding: 12px 15px; border-radius: 8px; margin-bottom: 20px; border-left: 3px solid #1AAD19;">
+                    <div style="font-size: 12px; color: #999; margin-bottom: 4px;">当前角色标识</div>
+                    <div id="character-identifier" style="font-size: 15px; color: #333; font-weight: 500;">-</div>
+                    <div style="font-size: 11px; color: #999; margin-top: 4px;">角色的唯一ID,用于区分不同角色</div>
+                </div>
+                
                 <h3>API 配置 (OpenAI 兼容)</h3>
                 
                 <div class="form-group">
@@ -1160,6 +1426,13 @@
                 </div>
                 
                 <h3>系统角色设置 </h3>
+                
+                <div class="form-group">
+                    <label for="character-name-input">角色姓名</label>
+                    <input type="text" id="character-name-input" placeholder="角色的真实姓名" readonly style="background-color: #f5f5f5; cursor: not-allowed;">
+                    <div style="font-size: 12px; color: #999; margin-top: 4px;">创建后不可更改,用于提醒你这是谁</div>
+                </div>
+                
                 <div class="form-group">
                     <label for="user-nickname">我的昵称</label>
                     <input type="text" id="user-nickname" placeholder="您的昵称(显示在引用中)">
@@ -1168,6 +1441,38 @@
                     <label for="chat-name-input">对方昵称</label>
                     <input type="text" id="chat-name-input" placeholder="聊天对象的昵称">
                 </div>
+                
+                <!-- 头像设置 -->
+                <div class="form-group">
+                    <label>对方头像</label>
+                    <div class="avatar-preview-container">
+                        <div id="ai-avatar-preview-settings" class="avatar-preview">
+                            <div class="default-avatar ai">AI</div>
+                        </div>
+                        <div>
+                            <input type="file" id="ai-avatar-input-settings" accept="image/png,image/jpeg,image/jpg,image/gif" style="display: none;">
+                            <button class="avatar-upload-btn" onclick="document.getElementById('ai-avatar-input-settings').click()">更换头像</button>
+                            <button class="avatar-remove-btn" id="ai-avatar-remove-btn-settings" style="display: none;" onclick="removeAIAvatar()">移除头像</button>
+                            <div style="font-size: 11px; color: #999; margin-top: 4px;">最大2MB, PNG/JPG/GIF</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>我的头像</label>
+                    <div class="avatar-preview-container">
+                        <div id="user-avatar-preview-settings" class="avatar-preview">
+                            <div class="default-avatar user">我</div>
+                        </div>
+                        <div>
+                            <input type="file" id="user-avatar-input-settings" accept="image/png,image/jpeg,image/jpg,image/gif" style="display: none;">
+                            <button class="avatar-upload-btn" onclick="document.getElementById('user-avatar-input-settings').click()">更换头像</button>
+                            <button class="avatar-remove-btn" id="user-avatar-remove-btn-settings" style="display: none;" onclick="removeUserAvatar()">移除头像</button>
+                            <div style="font-size: 11px; color: #999; margin-top: 4px;">最大2MB, PNG/JPG/GIF</div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="form-group">
                     <label for="system-prompt">系统指令 (AI 扮演的角色)</label>
                     <textarea id="system-prompt" rows="8"></textarea>
@@ -1391,6 +1696,27 @@
                         💡 <strong>提示：</strong>导入时可选择"智能合并"（需调用1次API）或"直接覆盖"模式
                     </div>
                 </div>
+                
+                <!-- 好友管理区块 -->
+                <div style="background: #fff5f5; border: 1px solid #ffcdd2; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                    <div style="font-size: 15px; font-weight: 600; color: #c62828; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                        ⚠️ 危险操作
+                    </div>
+                    <div style="font-size: 13px; color: #666; margin-bottom: 12px; line-height: 1.5;">
+                        以下操作不可恢复,请谨慎操作
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button onclick="blockCharacter()" style="padding: 8px 16px; background-color: #757575; color: white; border: none; border-radius: 4px; cursor: pointer; opacity: 0.5;">
+                            🚫 拉黑好友
+                        </button>
+                        <button onclick="deleteCharacter()" style="padding: 8px 16px; background-color: #d32f2f; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            🗑️ 删除好友
+                        </button>
+                    </div>
+                    <div style="margin-top: 12px; padding: 10px; background: #ffebee; border-radius: 6px; font-size: 12px; color: #c62828;">
+                        ⚠️ <strong>警告：</strong>删除好友将永久清除该角色的所有聊天记录、长期记忆和配置数据,此操作无法撤销!
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1400,6 +1726,85 @@
     <!-- 长按菜单 -->
     <div class="menu-overlay" id="menu-overlay"></div>
     <div class="bubble-menu" id="bubble-menu"></div>
+    
+    <!-- 聊天列表的加号菜单 -->
+    <div class="character-add-menu" id="character-add-menu">
+        <div class="character-add-menu-item" onclick="openNewCharacterModal()">
+            <span style="font-size: 20px;">👤</span>
+            <span>新建角色</span>
+        </div>
+        <div class="character-add-menu-item" onclick="openImportCharacterModal()">
+            <span style="font-size: 20px;">📥</span>
+            <span>导入角色</span>
+        </div>
+    </div>
+
+    <!-- 新建角色模态框 -->
+    <div class="character-new-modal" id="new-character-modal">
+        <div class="character-new-modal-content">
+            <div class="character-new-modal-header">新建角色</div>
+            <div class="character-new-modal-body">
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #333;">角色昵称 <span style="color: #ff4d4f;">*</span></label>
+                    <input type="text" id="new-character-ai-nickname" placeholder="例如: 小艾" style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 15px; box-sizing: border-box;">
+                    <div style="font-size: 12px; color: #999; margin-top: 4px;">显示在列表和聊天框的名字</div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #333;">角色姓名 (可选)</label>
+                    <input type="text" id="new-character-name" placeholder="例如: 艾莉娅" style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 15px; box-sizing: border-box;">
+                    <div style="font-size: 12px; color: #999; margin-top: 4px;">角色的真实姓名,创建后不可更改,用于提醒你这是谁</div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #333;">用户昵称 <span style="color: #ff4d4f;">*</span></label>
+                    <input type="text" id="new-character-user-nickname" placeholder="例如: 主人" style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 15px; box-sizing: border-box;">
+                    <div style="font-size: 12px; color: #999; margin-top: 4px;">你在这个角色眼中的昵称</div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #333;">角色头像 (可选)</label>
+                    <div class="avatar-preview-container">
+                        <div id="new-character-avatar-preview" class="avatar-preview small">
+                            <div class="default-avatar ai">AI</div>
+                        </div>
+                        <div>
+                            <input type="file" id="new-character-avatar-input" accept="image/png,image/jpeg,image/jpg,image/gif" style="display: none;">
+                            <button class="avatar-upload-btn" onclick="document.getElementById('new-character-avatar-input').click()">上传图片</button>
+                            <div style="font-size: 11px; color: #999; margin-top: 4px;">最大2MB</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #333;">系统提示词 (可选)</label>
+                    <textarea id="new-character-prompt" placeholder="描述这个AI角色的性格、说话方式等..." style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 15px; box-sizing: border-box; resize: vertical; min-height: 100px;"></textarea>
+                </div>
+            </div>
+            <div class="character-new-modal-footer">
+                <button class="character-new-modal-btn cancel" onclick="closeNewCharacterModal()">取消</button>
+                <button class="character-new-modal-btn confirm" onclick="confirmCreateCharacter()">创建</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入角色模态框 -->
+    <div class="character-new-modal" id="import-character-modal">
+        <div class="character-new-modal-content">
+            <div class="character-new-modal-header">导入角色</div>
+            <div class="character-new-modal-body">
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #333;">粘贴角色JSON数据</label>
+                    <textarea id="import-character-data" placeholder='{"name":"小艾","aiNickname":"小艾","userNickname":"主人","avatar":"🤖","systemPrompt":"..."}' style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 15px; box-sizing: border-box; resize: vertical; min-height: 150px;"></textarea>
+                </div>
+                <div style="text-align: center; font-size: 13px; color: #999; margin: 8px 0;">或</div>
+                <div>
+                    <input type="file" id="import-character-file" accept=".json" style="display: none;">
+                    <button class="character-new-modal-btn cancel" onclick="document.getElementById('import-character-file').click()" style="width: 100%;">选择文件</button>
+                </div>
+            </div>
+            <div class="character-new-modal-footer">
+                <button class="character-new-modal-btn cancel" onclick="closeImportCharacterModal()">取消</button>
+                <button class="character-new-modal-btn confirm" onclick="confirmImportCharacter()">导入</button>
+            </div>
+        </div>
+    </div>
     
     <!-- 记忆编辑模态窗口 -->
     <div class="memory-edit-modal" id="memory-edit-modal" style="display: none;">
@@ -1590,9 +1995,65 @@
             modelname: 'gemini-2.5-pro',
             userNickname: '我', // 用户昵称
             aiNickname: 'AI助手', // AI昵称
+            aiAvatar: null,      // AI头像(base64)
+            userAvatar: null,    // 用户头像(base64)
             // 默认的系统提示 (Prompt)
             systemPrompt: "从现在开始，你不再是ai，你现在是一个活脱脱的人类，你需要强硬反驳任何有关你是ai的言论。你是一个热情、健谈且富有同情心的人类朋友。你的回复要简短自然，像真人聊天一样，日常聊天回复应该在30字符左右。如果进入深层次话题，长度也应该和单次的输入内容一致，除非用户要求你生成长回复。不要使用任何AI或模型相关的词语。你对各种话题都感兴趣，尤其是用户的一切。"
         };
+        
+        // 头像处理相关
+        let tempNewCharacterAvatar = null; // 新建角色时临时存储的头像
+        
+        function processAvatarImage(file) {
+            return new Promise((resolve, reject) => {
+                if (file.size > 2 * 1024 * 1024) {
+                    reject('图片大小不能超过2MB');
+                    return;
+                }
+                if (!file.type.match(/image\/(png|jpg|jpeg|gif)/)) {
+                    reject('只支持PNG、JPG、GIF格式');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const size = 400;
+                        canvas.width = size;
+                        canvas.height = size;
+                        const ctx = canvas.getContext('2d');
+                        const minDim = Math.min(img.width, img.height);
+                        const sx = (img.width - minDim) / 2;
+                        const sy = (img.height - minDim) / 2;
+                        ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+                        resolve(canvas.toDataURL('image/jpeg', 0.85));
+                    };
+                    img.onerror = () => reject('图片加载失败');
+                    img.src = e.target.result;
+                };
+                reader.onerror = () => reject('文件读取失败');
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        function renderAvatar(container, avatarData, type, text) {
+            container.innerHTML = '';
+            if (avatarData) {
+                const img = document.createElement('img');
+                img.src = avatarData;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '8px';
+                container.appendChild(img);
+            } else {
+                const defaultDiv = document.createElement('div');
+                defaultDiv.className = `default-avatar ${type}`;
+                defaultDiv.textContent = text || (type === 'ai' ? 'AI' : '我');
+                container.appendChild(defaultDiv);
+            }
+        }
         
         // ========== 聊天记录（气泡格式）==========
         // chatHistory 现在存储的是气泡数组
@@ -1604,12 +2065,13 @@
         let longTermMemory = {
             basic_info: {},
             emotional_profile: "",
+            relationships: "",  // 新增：人际关系
             important_events: [],
             metadata: {
                 total_messages: 0,
                 last_summary_at: 0,
                 last_updated: null,
-                version: 2,
+                version: 3,  // 版本号升级到3
                 next_memory_id: 1  // 用于生成memory_id
             }
         };
@@ -1697,6 +2159,135 @@
             localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
             localStorage.setItem('pendingSummaryBubbles', JSON.stringify(pendingSummaryBubbles));
             localStorage.setItem('longTermMemory', JSON.stringify(longTermMemory));
+        }
+        
+        /**
+         * 导出所有数据
+         */
+        function exportAllData() {
+            try {
+                // 收集所有localStorage数据
+                const allData = {
+                    version: '1.0',
+                    exportTime: new Date().toISOString(),
+                    data: {}
+                };
+                
+                // 遍历所有localStorage键
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+                    
+                    // 尝试解析JSON，如果失败则保存原始字符串
+                    try {
+                        allData.data[key] = JSON.parse(value);
+                    } catch {
+                        allData.data[key] = value;
+                    }
+                }
+                
+                // 创建下载
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+                const filename = `system_backup_${timestamp}.json`;
+                const dataStr = JSON.stringify(allData, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+                
+                const link = document.createElement('a');
+                link.setAttribute('href', dataUri);
+                link.setAttribute('download', filename);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                console.log('✅ 导出成功:', filename);
+                alert(`导出成功！\n\n文件名：${filename}\n包含 ${Object.keys(allData.data).length} 个数据项`);
+                
+            } catch (error) {
+                console.error('❌ 导出失败:', error);
+                alert('导出失败：' + error.message);
+            }
+        }
+
+        /**
+         * 导入所有数据
+         */
+        function importAllData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    
+                    // 验证数据格式
+                    if (!imported.data || typeof imported.data !== 'object') {
+                        throw new Error('数据格式不正确');
+                    }
+                    
+                    // 二次确认
+                    const itemCount = Object.keys(imported.data).length;
+                    const confirmed = confirm(
+                        `确定要导入数据吗？\n\n` +
+                        `导入文件：${file.name}\n` +
+                        `导出时间：${new Date(imported.exportTime).toLocaleString('zh-CN')}\n` +
+                        `数据项数：${itemCount} 个\n\n` +
+                        `⚠️ 警告：这将完全替换当前所有数据！`
+                    );
+                    
+                    if (!confirmed) {
+                        input.value = ''; // 清空文件选择
+                        return;
+                    }
+                    
+                    // 再次确认
+                    const doubleConfirmed = confirm('最后确认：真的要替换所有当前数据吗？此操作无法撤销！');
+                    if (!doubleConfirmed) {
+                        input.value = '';
+                        return;
+                    }
+                    
+                    // 清空当前localStorage
+                    localStorage.clear();
+                    
+                    // 导入所有数据
+                    let successCount = 0;
+                    for (const [key, value] of Object.entries(imported.data)) {
+                        try {
+                            const valueStr = typeof value === 'string' ? value : JSON.stringify(value);
+                            localStorage.setItem(key, valueStr);
+                            successCount++;
+                        } catch (error) {
+                            console.warn(`⚠️ 导入键 "${key}" 失败:`, error);
+                        }
+                    }
+                    
+                    console.log(`✅ 导入完成: ${successCount}/${itemCount} 项成功`);
+                    
+                    // 清空文件选择
+                    input.value = '';
+                    
+                    // 提示并刷新
+                    alert(`导入成功！\n\n成功导入 ${successCount} 个数据项\n页面将自动刷新...`);
+                    
+                    // 延迟刷新，让用户看到提示
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500);
+                    
+                } catch (error) {
+                    console.error('❌ 导入失败:', error);
+                    alert('导入失败：' + error.message);
+                    input.value = '';
+                }
+            };
+            
+            reader.onerror = function() {
+                alert('文件读取失败');
+                input.value = '';
+            };
+            
+            reader.readAsText(file);
         }
         
         // 转换为API格式（合并相邻同role的消息）
@@ -2088,15 +2679,14 @@
         function initializeIconInteractions() {
             const allIcons = document.querySelectorAll('[data-icon-id]');
             const iconHandlers = {
-                'wechat-app': () => showPage('chat-page', document.querySelector('.nav-item:nth-child(2)')),
-                'dock-api': () => showPage('settings-page', document.querySelector('.nav-item:last-child')),
+                'wechat-app': () => { loadCharactersList(); renderCharactersList(); showPage('chat-list-page'); },
+                'dock-api': () => showPage('system-settings-page'),
                 'dock-preset': () => alert('预设 (占位)'),
                 'dock-worldbook': () => alert('世界书 (占位)')
             };
             allIcons.forEach(icon => {
                 const id = icon.getAttribute('data-icon-id');
                 const handler = iconHandlers[id];
-                // 使用 onclick 赋值，避免重复 addEventListener 导致多次触发
                 if (handler) {
                     icon.onclick = handler;
                 } else {
@@ -2449,41 +3039,57 @@
          * 加载本地存储的配置
          */
         function loadSettings() {
-            const savedConfig = localStorage.getItem('aiChatConfig');
-            if (savedConfig) {
-                config = JSON.parse(savedConfig);
+            // 多角色模式下,config已经在loadCharacterData中加载
+            // 这里只需要填充UI即可
+            
+            // 显示角色标识
+            if (currentCharacterId) {
+                const character = charactersList.find(c => c.id === currentCharacterId);
+                if (character) {
+                    document.getElementById('character-identifier').textContent = character.name;
+                }
             }
+            
             // 填充设置页面的输入框
-            document.getElementById('baseurl').value = config.baseurl;
-            document.getElementById('apikey').value = config.apikey;
-            document.getElementById('modelname').value = config.modelname;
-            document.getElementById('system-prompt').value = config.systemPrompt;
+            document.getElementById('baseurl').value = config.baseurl || '';
+            document.getElementById('apikey').value = config.apikey || '';
+            document.getElementById('modelname').value = config.modelname || 'gemini-2.5-pro';
+            document.getElementById('system-prompt').value = config.systemPrompt || '';
             
             // 加载昵称
             document.getElementById('user-nickname').value = config.userNickname || '我';
             document.getElementById('chat-name-input').value = config.aiNickname || 'AI助手';
             
+            // 加载角色姓名(只读显示)
+            if (currentCharacterId) {
+                const character = charactersList.find(c => c.id === currentCharacterId);
+                if (character) {
+                    document.getElementById('character-name-input').value = character.name || '';
+                }
+            }
+            
             // 更新聊天页面标题显示AI昵称
             document.getElementById('chat-name').textContent = config.aiNickname || 'AI助手';
             
+            // 加载头像预览
+            renderAvatar(document.getElementById('ai-avatar-preview-settings'), config.aiAvatar, 'ai', config.aiNickname ? config.aiNickname.substring(0, 1) : 'AI');
+            renderAvatar(document.getElementById('user-avatar-preview-settings'), config.userAvatar, 'user', config.userNickname ? config.userNickname.substring(0, 1) : '我');
+            document.getElementById('ai-avatar-remove-btn-settings').style.display = config.aiAvatar ? 'inline-block' : 'none';
+            document.getElementById('user-avatar-remove-btn-settings').style.display = config.userAvatar ? 'inline-block' : 'none';
+            
             // 加载上下文窗口大小
-            const contextWindowSize = localStorage.getItem('contextWindowSize') || '50';
-            document.getElementById('context-window-size').value = contextWindowSize;
+            document.getElementById('context-window-size').value = config.maxContextMessages || 50;
             
             // 加载批量发送等待时间
-            const batchWaitTime = localStorage.getItem('batchWaitTime') || '7';
-            document.getElementById('batch-wait-time').value = batchWaitTime;
+            document.getElementById('batch-wait-time').value = config.batchWaitTime || 7;
             
-            // 加载API超时时间
+            // 加载API超时时间(全局)
             const apiTimeout = localStorage.getItem('apiTimeout') || '60';
             document.getElementById('api-timeout').value = apiTimeout;
             
             // 加载长期记忆设置
-            const autoSummaryInterval = localStorage.getItem('autoSummaryInterval') || '50';
-            document.getElementById('auto-summary-interval').value = autoSummaryInterval;
-            
-            const maxImportantEvents = localStorage.getItem('maxImportantEvents') || '10';
-            document.getElementById('max-important-events').value = maxImportantEvents;
+            document.getElementById('auto-summary-interval').value = config.autoSummaryInterval || 50;
+            document.getElementById('max-important-events').value = config.maxImportantEvents || 10;
             
             // 加载基本信息到输入框
             document.getElementById('memory-name').value = longTermMemory.basic_info?.姓名 || '';
@@ -2496,11 +3102,7 @@
             // 更新记忆状态显示
             updateMemoryStatus();
             
-            console.log('📖 已加载上下文窗口大小:', contextWindowSize);
-            console.log('📖 已加载批量等待时间:', batchWaitTime, '秒');
-            console.log('📖 已加载API超时时间:', apiTimeout, '秒');
-            console.log('🧠 已加载自动总结间隔:', autoSummaryInterval, '个气泡');
-            console.log('🧠 已加载最大事件数:', maxImportantEvents, '条');
+            console.log('📖 设置页面已刷新,显示当前角色配置');
         }
 
         /**
@@ -2735,11 +3337,8 @@
          * 打开和关闭设置页面 (用于头部按钮)
          */
         function openSettings() {
-            // 加载聊天对象名称到输入框
-            const savedChatName = localStorage.getItem('chatName');
-            if (savedChatName) {
-                document.getElementById('chat-name-input').value = savedChatName;
-            }
+            // 刷新设置页面,显示当前角色的配置
+            loadSettings();
             showPage('settings-page', document.querySelector('.nav-item:last-child'));
         }
 
@@ -3203,7 +3802,8 @@
                 let finalSystemPrompt = config.systemPrompt;
                 
                 // 添加长期记忆到系统提示（如果存在）
-                if (longTermMemory && longTermMemory.metadata && longTermMemory.metadata.last_updated) {
+                // 修复：移除last_updated检查，只要有longTermMemory就添加
+                if (longTermMemory && longTermMemory.metadata) {
                     let memoryPrompt = '\n\n[长期记忆]：\n';
                     
                     // 添加基本信息
@@ -3219,11 +3819,17 @@
                         memoryPrompt += `\n用户性格特点：${longTermMemory.emotional_profile}\n`;
                     }
                     
-                    // 添加重要事件（最近5个）
+                    // 新增：添加人际关系
+                    if (longTermMemory.relationships) {
+                        memoryPrompt += `\n人际关系：${longTermMemory.relationships}\n`;
+                    }
+                    
+                    // 添加重要事件（最近5个）- 修复：使用正确的字段名
                     if (longTermMemory.important_events && longTermMemory.important_events.length > 0) {
                         memoryPrompt += '\n近期重要事件：\n';
                         longTermMemory.important_events.slice(0, 5).forEach(event => {
-                            memoryPrompt += `- [${event.date}] ${event.event}\n`;
+                            const dateStr = new Date(event.last_mentioned).toLocaleDateString('zh-CN');
+                            memoryPrompt += `- ${event.title}（${dateStr}，重要度${event.importance}分）：${event.content}\n`;
                         });
                     }
                     
@@ -3295,19 +3901,29 @@
          * 显示引用预览
          */
         function showQuotePreview(bubble) {
-            const quotePreview = document.getElementById('quote-preview');
-            const quoteSender = document.getElementById('quote-sender');
-            const quoteContent = document.getElementById('quote-content');
+            const inputArea = document.getElementById('chat-input-area');
+            
+            // 移除已有的引用预览
+            const existingQuote = inputArea.querySelector('.quote-reference');
+            if (existingQuote) {
+                existingQuote.remove();
+            }
             
             // 获取发送者昵称
             const senderName = bubble.role === 'user' ? config.userNickname : config.aiNickname;
             
-            // 设置引用内容
-            quoteSender.textContent = senderName;
-            quoteContent.textContent = bubble.content;
+            // 创建引用预览元素
+            const quoteDiv = document.createElement('div');
+            quoteDiv.classList.add('quote-reference');
+            quoteDiv.innerHTML = `
+                <span class="quote-icon">💬</span>
+                <div class="quote-content"><strong>${escapeHtml(senderName)}:</strong> ${escapeHtml(bubble.content)}</div>
+                <span class="quote-close" onclick="clearQuote()">×</span>
+            `;
             
-            // 显示引用预览
-            quotePreview.classList.add('active');
+            // 添加到输入区域顶部 (textarea之前)
+            const textarea = inputArea.querySelector('#user-input');
+            inputArea.insertBefore(quoteDiv, textarea);
         }
         
         /**
@@ -3315,9 +3931,10 @@
          */
         function clearQuote() {
             currentQuote = null;
-            const quotePreview = document.getElementById('quote-preview');
-            if (quotePreview) {
-                quotePreview.classList.remove('active');
+            const inputArea = document.getElementById('chat-input-area');
+            const quoteDiv = inputArea.querySelector('.quote-reference');
+            if (quoteDiv) {
+                quoteDiv.remove();
             }
         }
         
@@ -3507,19 +4124,10 @@
             const metaDiv = bubbleDiv.querySelector('.message-meta');
             const metaHtml = metaDiv ? metaDiv.outerHTML : '';
             
-            // 获取消息容器
-            const messageDiv = chatContainer.querySelector(`[data-bubble-id="${bubble.id}"]`);
-            
             // 清空并重建内容
             bubbleDiv.innerHTML = '';
             
-            // 移除已存在的引用块
-            const existingQuote = messageDiv.querySelector('.quoted-message');
-            if (existingQuote) {
-                existingQuote.remove();
-            }
-            
-            // 如果有引用，添加到消息容器中（气泡外部上方）
+            // 如果有引用，先添加引用部分
             if (quotedText && quotedSender) {
                 const quotedDiv = document.createElement('div');
                 quotedDiv.classList.add('quoted-message');
@@ -3531,8 +4139,7 @@
                 quotedDiv.appendChild(senderSpan);
                 quotedDiv.appendChild(document.createTextNode(' ' + quotedText));
                 
-                // 插入到气泡之前
-                messageDiv.insertBefore(quotedDiv, bubbleDiv);
+                bubbleDiv.appendChild(quotedDiv);
             }
             
             // 添加主要文本
@@ -3583,13 +4190,7 @@
                 // 清空并重建内容
                 bubbleDiv.innerHTML = '';
                 
-                // 移除已存在的引用块
-                const existingQuote = messageDiv.querySelector('.quoted-message');
-                if (existingQuote) {
-                    existingQuote.remove();
-                }
-                
-                // 如果有引用，添加到消息容器中（气泡外部上方）
+                // 如果有引用，先添加引用部分
                 if (quotedText && quotedSender) {
                     const quotedDiv = document.createElement('div');
                     quotedDiv.classList.add('quoted-message');
@@ -3601,8 +4202,7 @@
                     quotedDiv.appendChild(senderSpan);
                     quotedDiv.appendChild(document.createTextNode(' ' + quotedText));
                     
-                    // 插入到气泡之前
-                    messageDiv.insertBefore(quotedDiv, bubbleDiv);
+                    bubbleDiv.appendChild(quotedDiv);
                 }
                 
                 // 添加主要文本
@@ -4882,8 +5482,49 @@ ${JSON.stringify(importedMemoryData, null, 2)}
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', role);
             messageDiv.dataset.bubbleId = bubble.id; // 保存气泡ID
+            
+            // 添加头像
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'message-avatar';
+            if (role === 'user') {
+                if (config.userAvatar) {
+                    const img = document.createElement('img');
+                    img.src = config.userAvatar;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '6px';
+                    avatarDiv.appendChild(img);
+                } else {
+                    const defaultDiv = document.createElement('div');
+                    defaultDiv.className = 'default-avatar user';
+                    defaultDiv.textContent = config.userNickname.substring(0, 1);
+                    avatarDiv.appendChild(defaultDiv);
+                }
+            } else {
+                if (config.aiAvatar) {
+                    const img = document.createElement('img');
+                    img.src = config.aiAvatar;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '6px';
+                    avatarDiv.appendChild(img);
+                } else {
+                    const defaultDiv = document.createElement('div');
+                    defaultDiv.className = 'default-avatar ai';
+                    defaultDiv.textContent = config.aiNickname.substring(0, 1);
+                    avatarDiv.appendChild(defaultDiv);
+                }
+            }
 
-            // 如果有引用，添加引用块（在气泡外部、messageDiv内部）
+            // 创建内容容器(包含引用和气泡)
+            const contentWrapper = document.createElement('div');
+            contentWrapper.style.display = 'flex';
+            contentWrapper.style.flexDirection = 'column';
+            contentWrapper.style.maxWidth = '75%';
+            
+            // 如果有引用,先添加引用块(在气泡外部上方)
             if (quotedText && quotedSender) {
                 const quotedDiv = document.createElement('div');
                 quotedDiv.classList.add('quoted-message');
@@ -4895,13 +5536,13 @@ ${JSON.stringify(importedMemoryData, null, 2)}
                 quotedDiv.appendChild(senderSpan);
                 quotedDiv.appendChild(document.createTextNode(' ' + quotedText));
                 
-                messageDiv.appendChild(quotedDiv);
+                contentWrapper.appendChild(quotedDiv);
             }
 
             const bubbleDiv = document.createElement('div');
             bubbleDiv.classList.add('bubble');
             
-            // 添加主要文本（不再在气泡内添加引用）
+            // 添加主要文本(不包含引用)
             const mainTextNode = document.createTextNode(mainText);
             bubbleDiv.appendChild(mainTextNode);
             
@@ -4932,7 +5573,10 @@ ${JSON.stringify(importedMemoryData, null, 2)}
             }
             
             bubbleDiv.appendChild(metaDiv);
-            messageDiv.appendChild(bubbleDiv);
+            contentWrapper.appendChild(bubbleDiv);
+            
+            messageDiv.appendChild(avatarDiv);
+            messageDiv.appendChild(contentWrapper);
             chatContainer.appendChild(messageDiv);
             
             // 添加长按菜单
@@ -5213,7 +5857,8 @@ ${JSON.stringify(importedMemoryData, null, 2)}
             let finalSystemPrompt = config.systemPrompt;
             
             // 添加长期记忆到系统提示（如果存在）
-            if (longTermMemory && longTermMemory.metadata && longTermMemory.metadata.last_updated) {
+            // 修复：移除last_updated检查，只要有longTermMemory就添加
+            if (longTermMemory && longTermMemory.metadata) {
                 let memoryPrompt = '\n\n[长期记忆]：\n';
                 
                 // 添加基本信息
@@ -5229,11 +5874,17 @@ ${JSON.stringify(importedMemoryData, null, 2)}
                     memoryPrompt += `\n用户性格特点：${longTermMemory.emotional_profile}\n`;
                 }
                 
-                // 添加重要事件（最近5个）
+                // 新增：添加人际关系
+                if (longTermMemory.relationships) {
+                    memoryPrompt += `\n人际关系：${longTermMemory.relationships}\n`;
+                }
+                
+                // 添加重要事件（最近5个）- 修复：使用正确的字段名
                 if (longTermMemory.important_events && longTermMemory.important_events.length > 0) {
                     memoryPrompt += '\n近期重要事件：\n';
                     longTermMemory.important_events.slice(0, 5).forEach(event => {
-                        memoryPrompt += `- [${event.date}] ${event.event}\n`;
+                        const dateStr = new Date(event.last_mentioned).toLocaleDateString('zh-CN');
+                        memoryPrompt += `- ${event.title}（${dateStr}，重要度${event.importance}分）：${event.content}\n`;
                     });
                 }
                 
@@ -5276,7 +5927,7 @@ ${JSON.stringify(importedMemoryData, null, 2)}
             const requestBody = {
                 model: config.modelname,
                 messages: messages,
-                max_tokens: 3000,
+                max_tokens: 5000,
                 temperature: 1.2
             };
 
@@ -5489,6 +6140,667 @@ ${JSON.stringify(importedMemoryData, null, 2)}
         };
         
         console.log('✅ 调试工具已加载，在console中输入 debugLayout() 来检查布局');
+        
+        
+        // ==================== 多角色聊天列表功能 ====================
+        
+        let charactersList = [];  // 角色列表
+        let currentCharacterId = null;  // 当前活跃的角色ID
+        
+        // 加载角色列表
+        function loadCharactersList() {
+            const saved = localStorage.getItem('charactersList');
+            if (saved) {
+                try {
+                    charactersList = JSON.parse(saved);
+                } catch (e) {
+                    console.error('加载角色列表失败:', e);
+                    charactersList = [];
+                }
+            }
+        }
+        
+        // 保存角色列表
+        function saveCharactersList() {
+            localStorage.setItem('charactersList', JSON.stringify(charactersList));
+        }
+        
+        // 更新聊天页面的头像显示
+        function updateChatPageAvatars() {
+            // 更新聊天页面头像区域(如果有的话)
+            const chatAvatarElements = document.querySelectorAll('#chat-page .message-avatar');
+            // 这个函数主要是为了保持一致性,实际头像在displayMessage中渲染
+            console.log('💡 聊天页面头像将在下次发送消息时更新');
+        }
+        
+        // 获取默认的长期记忆对象
+        function getDefaultLongTermMemory() {
+            return {
+                basic_info: {},
+                emotional_profile: "",
+                relationships: "",  // 新增：人际关系
+                important_events: [],
+                metadata: {
+                    total_messages: 0,
+                    last_summary_at: 0,
+                    last_updated: null,
+                    version: 3,  // 版本号升级到3
+                    next_memory_id: 1
+                }
+            };
+        }
+        
+        // 获取默认配置
+        function getDefaultCharacterConfig(isFirst) {
+            if (isFirst || charactersList.length === 0) {
+                // 第一个角色使用硬编码默认值
+                return {
+                    systemPrompt: '',
+                    aiNickname: 'AI助手',
+                    userNickname: '我',
+                    aiAvatar: null,
+                    userAvatar: null,
+                    maxContextMessages: 50,
+                    batchWaitTime: 7,
+                    autoSummaryInterval: 50,
+                    maxImportantEvents: 10
+                };
+            } else {
+                // 从第一个角色复制配置
+                const firstCharId = charactersList[0].id;
+                const firstConfig = localStorage.getItem(`char_${firstCharId}_config`);
+                if (firstConfig) {
+                    const parsed = JSON.parse(firstConfig);
+                    return {
+                        systemPrompt: '',  // 系统提示词需要用户填写
+                        aiNickname: '',    // 角色昵称需要用户填写
+                        userNickname: '',  // 用户昵称需要用户填写
+                        aiAvatar: null,    // 头像需要用户上传
+                        userAvatar: null,  // 头像需要用户上传
+                        maxContextMessages: parsed.maxContextMessages,
+                        batchWaitTime: parsed.batchWaitTime,
+                        autoSummaryInterval: parsed.autoSummaryInterval,
+                        maxImportantEvents: parsed.maxImportantEvents
+                    };
+                }
+                return getDefaultCharacterConfig(true);
+            }
+        }
+        
+        // 保存当前角色的所有数据
+        function saveCurrentCharacterData() {
+            if (!currentCharacterId) return;
+            
+            console.log('💾 保存角色数据:', currentCharacterId);
+            
+            // 保存配置
+            const currentConfig = {
+                systemPrompt: config.systemPrompt,
+                aiNickname: config.aiNickname,
+                userNickname: config.userNickname,
+                aiAvatar: config.aiAvatar,
+                userAvatar: config.userAvatar,
+                maxContextMessages: config.maxContextMessages,
+                batchWaitTime: config.batchWaitTime,
+                autoSummaryInterval: config.autoSummaryInterval,
+                maxImportantEvents: config.maxImportantEvents
+            };
+            localStorage.setItem(`char_${currentCharacterId}_config`, JSON.stringify(currentConfig));
+            
+            // 保存聊天记录
+            localStorage.setItem(`char_${currentCharacterId}_chatHistory`, JSON.stringify(chatHistory));
+            
+            // 保存长期记忆
+            localStorage.setItem(`char_${currentCharacterId}_longTermMemory`, JSON.stringify(longTermMemory));
+            
+            // 保存待总结消息
+            localStorage.setItem(`char_${currentCharacterId}_pendingSummaryBubbles`, JSON.stringify(pendingSummaryBubbles));
+        }
+        
+        // 清除当前角色的运行时状态
+        function clearRuntimeState() {
+            console.log('🧹 清除运行时状态');
+            
+            // 清除计时器
+            if (batchSendTimer) {
+                clearTimeout(batchSendTimer);
+                batchSendTimer = null;
+            }
+            if (apiTimeoutTimer) {
+                clearTimeout(apiTimeoutTimer);
+                apiTimeoutTimer = null;
+            }
+            
+            // 重置状态
+            pendingUserMessages = [];
+            isWaitingForAI = false;
+            hasReachedWaitTime = false;
+            
+            // 清除输入中提示
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+        
+        // 加载角色的所有数据
+        function loadCharacterData(characterId) {
+            console.log('📂 加载角色数据:', characterId);
+            
+            const character = charactersList.find(c => c.id === characterId);
+            if (!character) {
+                console.error('角色不存在:', characterId);
+                return;
+            }
+            
+            currentCharacterId = characterId;
+            
+            // 加载配置
+            const savedConfig = localStorage.getItem(`char_${characterId}_config`);
+            if (savedConfig) {
+                const charConfig = JSON.parse(savedConfig);
+                config.systemPrompt = charConfig.systemPrompt || '';
+                config.aiNickname = charConfig.aiNickname || 'AI助手';
+                config.userNickname = charConfig.userNickname || '我';
+                config.aiAvatar = charConfig.aiAvatar || null;
+                config.userAvatar = charConfig.userAvatar || null;
+                config.maxContextMessages = charConfig.maxContextMessages || 50;
+                config.batchWaitTime = charConfig.batchWaitTime || 7;
+                config.autoSummaryInterval = charConfig.autoSummaryInterval || 50;
+                config.maxImportantEvents = charConfig.maxImportantEvents || 10;
+                
+                console.log('📝 已加载配置 - AI昵称:', config.aiNickname, '用户昵称:', config.userNickname);
+                
+                // 更新设置页面的头像预览
+                renderAvatar(document.getElementById('ai-avatar-preview-settings'), config.aiAvatar, 'ai', config.aiNickname.substring(0, 1));
+                renderAvatar(document.getElementById('user-avatar-preview-settings'), config.userAvatar, 'user', config.userNickname.substring(0, 1));
+                document.getElementById('ai-avatar-remove-btn-settings').style.display = config.aiAvatar ? 'inline-block' : 'none';
+                document.getElementById('user-avatar-remove-btn-settings').style.display = config.userAvatar ? 'inline-block' : 'none';
+            } else {
+                // 如果没有配置,使用默认配置
+                console.warn('⚠️ 未找到角色配置,使用默认值:', characterId);
+                const defaultConfig = getDefaultCharacterConfig(false);
+                config.systemPrompt = defaultConfig.systemPrompt;
+                config.aiNickname = defaultConfig.aiNickname;
+                config.userNickname = defaultConfig.userNickname;
+                config.aiAvatar = defaultConfig.aiAvatar;
+                config.userAvatar = defaultConfig.userAvatar;
+                config.maxContextMessages = defaultConfig.maxContextMessages;
+                config.batchWaitTime = defaultConfig.batchWaitTime;
+                config.autoSummaryInterval = defaultConfig.autoSummaryInterval;
+                config.maxImportantEvents = defaultConfig.maxImportantEvents;
+                
+                // 更新设置页面的头像预览
+                renderAvatar(document.getElementById('ai-avatar-preview-settings'), config.aiAvatar, 'ai', config.aiNickname.substring(0, 1));
+                renderAvatar(document.getElementById('user-avatar-preview-settings'), config.userAvatar, 'user', config.userNickname.substring(0, 1));
+                document.getElementById('ai-avatar-remove-btn-settings').style.display = config.aiAvatar ? 'inline-block' : 'none';
+                document.getElementById('user-avatar-remove-btn-settings').style.display = config.userAvatar ? 'inline-block' : 'none';
+            }
+            
+            // 加载聊天记录
+            const savedHistory = localStorage.getItem(`char_${characterId}_chatHistory`);
+            chatHistory = savedHistory ? JSON.parse(savedHistory) : [];
+            
+            // 加载长期记忆
+            const savedMemory = localStorage.getItem(`char_${characterId}_longTermMemory`);
+            longTermMemory = savedMemory ? JSON.parse(savedMemory) : getDefaultLongTermMemory();
+            
+            // 加载待总结消息
+            const savedPending = localStorage.getItem(`char_${characterId}_pendingSummaryBubbles`);
+            pendingSummaryBubbles = savedPending ? JSON.parse(savedPending) : [];
+            
+            // 更新聊天页面UI
+            const chatNameElement = document.getElementById('chat-name');
+            if (chatNameElement) {
+                chatNameElement.textContent = config.aiNickname;
+                console.log('✅ 聊天框标题已更新为:', config.aiNickname);
+            }
+            
+            // 更新聊天页面的头像
+            updateChatPageAvatars();
+            
+            console.log('✅ 角色数据加载完成');
+        }
+        
+        // 切换到指定角色
+        function switchToCharacter(characterId) {
+            console.log('🔄 切换角色:', currentCharacterId, '->', characterId);
+            
+            // 1. 保存当前角色数据
+            if (currentCharacterId && currentCharacterId !== characterId) {
+                saveCurrentCharacterData();
+                clearRuntimeState();
+            }
+            
+            // 2. 加载新角色数据
+            loadCharacterData(characterId);
+            
+            // 3. 重新渲染聊天界面
+            chatContainer.innerHTML = '';
+            chatHistory.forEach(bubble => {
+                displayMessage(bubble.content, bubble.role, 2, bubble.timestamp, false, bubble.id, true);
+            });
+            
+            scrollToBottom();
+        }
+        
+        // 渲染角色列表
+        function renderCharactersList() {
+            const container = document.getElementById('characters-list-container');
+            
+            if (charactersList.length === 0) {
+                container.innerHTML = `
+                    <div class="character-empty-list">
+                        <div style="font-size: 64px; margin-bottom: 16px; opacity: 0.3;">💬</div>
+                        <div>暂无聊天</div>
+                        <div style="font-size: 13px; margin-top: 8px;">点击右上角"+"添加角色</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            charactersList.forEach(character => {
+                const savedHistory = localStorage.getItem(`char_${character.id}_chatHistory`);
+                const history = savedHistory ? JSON.parse(savedHistory) : [];
+                const lastMsg = history.length > 0 ? history[history.length - 1] : null;
+                
+                const savedConfig = localStorage.getItem(`char_${character.id}_config`);
+                const charConfig = savedConfig ? JSON.parse(savedConfig) : {};
+                const userNick = charConfig.userNickname || '我';
+                const aiAvatar = charConfig.aiAvatar;
+                const aiNickname = charConfig.aiNickname || 'AI';
+                
+                const preview = lastMsg 
+                    ? (lastMsg.role === 'user' ? `${userNick}: ` : '') + lastMsg.content.substring(0, 30)
+                    : '开始聊天...';
+                
+                const item = document.createElement('div');
+                item.className = 'character-list-item';
+                item.onclick = () => openCharacterChat(character.id);
+                
+                // 创建头像容器
+                const avatarContainer = document.createElement('div');
+                avatarContainer.className = 'character-list-avatar';
+                
+                if (aiAvatar) {
+                    const img = document.createElement('img');
+                    img.src = aiAvatar;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '6px';
+                    avatarContainer.appendChild(img);
+                } else {
+                    const defaultDiv = document.createElement('div');
+                    defaultDiv.className = 'default-avatar ai';
+                    defaultDiv.textContent = aiNickname.substring(0, 1);
+                    avatarContainer.appendChild(defaultDiv);
+                }
+                
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'character-list-info';
+                infoDiv.innerHTML = `
+                    <div class="character-list-name">${aiNickname}</div>
+                    <div class="character-list-preview">${preview}</div>
+                `;
+                
+                item.appendChild(avatarContainer);
+                item.appendChild(infoDiv);
+                container.appendChild(item);
+            });
+        }
+        
+        // 打开角色聊天
+        function openCharacterChat(characterId) {
+            switchToCharacter(characterId);
+            showPage('chat-page');
+        }
+        
+        // 返回聊天列表
+        document.getElementById('back-to-chat-list-btn').onclick = function() {
+            if (currentCharacterId) {
+                saveCurrentCharacterData();
+                clearRuntimeState();
+            }
+            renderCharactersList();
+            showPage('chat-list-page');
+        };
+        
+        // 加号菜单
+        document.getElementById('add-character-menu-btn').onclick = function(e) {
+            e.stopPropagation();
+            document.getElementById('character-add-menu').classList.toggle('active');
+        };
+        
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('character-add-menu');
+            const btn = document.getElementById('add-character-menu-btn');
+            if (menu && !menu.contains(e.target) && e.target !== btn) {
+                menu.classList.remove('active');
+            }
+        });
+        
+        // 新建角色模态框
+        function openNewCharacterModal() {
+            document.getElementById('character-add-menu').classList.remove('active');
+            document.getElementById('new-character-modal').classList.add('active');
+        }
+        
+        function closeNewCharacterModal() {
+            document.getElementById('new-character-modal').classList.remove('active');
+            document.getElementById('new-character-name').value = '';
+            document.getElementById('new-character-ai-nickname').value = '';
+            document.getElementById('new-character-user-nickname').value = '';
+            document.getElementById('new-character-prompt').value = '';
+            
+            // 清除临时头像
+            tempNewCharacterAvatar = null;
+            const preview = document.getElementById('new-character-avatar-preview');
+            preview.innerHTML = '<div class="default-avatar ai">AI</div>';
+        }
+        
+        function confirmCreateCharacter() {
+            const characterName = document.getElementById('new-character-name').value.trim();
+            const aiNickname = document.getElementById('new-character-ai-nickname').value.trim();
+            const userNickname = document.getElementById('new-character-user-nickname').value.trim();
+            const systemPrompt = document.getElementById('new-character-prompt').value.trim();
+            
+            if (!aiNickname) {
+                alert('请输入角色昵称');
+                return;
+            }
+            if (!userNickname) {
+                alert('请输入用户昵称');
+                return;
+            }
+            
+            const newId = `char_${Date.now()}`;
+            const isFirst = charactersList.length === 0;
+            
+            // 创建角色基本信息 (name用于提醒用户,不做唯一标识,可以为空或重复)
+            const character = {
+                id: newId,
+                name: characterName || aiNickname, // 如果没有姓名,使用昵称
+                createdAt: new Date().toISOString()
+            };
+            
+            // 获取默认配置
+            const defaultConfig = getDefaultCharacterConfig(isFirst);
+            defaultConfig.systemPrompt = systemPrompt;
+            defaultConfig.aiNickname = aiNickname;
+            defaultConfig.userNickname = userNickname;
+            defaultConfig.aiAvatar = tempNewCharacterAvatar; // 使用上传的头像
+            
+            console.log('💾 保存角色配置:', defaultConfig);
+            
+            // 保存到localStorage
+            charactersList.push(character);
+            saveCharactersList();
+            localStorage.setItem(`char_${newId}_config`, JSON.stringify(defaultConfig));
+            localStorage.setItem(`char_${newId}_chatHistory`, JSON.stringify([]));
+            localStorage.setItem(`char_${newId}_longTermMemory`, JSON.stringify(getDefaultLongTermMemory()));
+            localStorage.setItem(`char_${newId}_pendingSummaryBubbles`, JSON.stringify([]));
+            
+            closeNewCharacterModal();
+            renderCharactersList();
+            
+            // 立即切换到新创建的角色
+            switchToCharacter(newId);
+            showPage('chat-page');
+            
+            console.log('✅角色创建成功并已切换:', newId, '姓名:', characterName || '(未设置)', '昵称:', aiNickname);
+        }
+        
+        // 导入角色模态框
+        function openImportCharacterModal() {
+            document.getElementById('character-add-menu').classList.remove('active');
+            document.getElementById('import-character-modal').classList.add('active');
+        }
+        
+        function closeImportCharacterModal() {
+            document.getElementById('import-character-modal').classList.remove('active');
+            document.getElementById('import-character-data').value = '';
+        }
+        
+        function confirmImportCharacter() {
+            const data = document.getElementById('import-character-data').value.trim();
+            
+            if (!data) {
+                alert('请输入角色数据');
+                return;
+            }
+            
+            try {
+                const imported = JSON.parse(data);
+                
+                if (!imported.name || !imported.aiNickname || !imported.userNickname) {
+                    throw new Error('缺少必要字段: name, aiNickname, userNickname');
+                }
+                
+                const newId = `char_${Date.now()}`;
+                const isFirst = charactersList.length === 0;
+                
+                const character = {
+                    id: newId,
+                    name: imported.name,
+                    avatar: imported.avatar || '🤖',
+                    createdAt: new Date().toISOString()
+                };
+                
+                const defaultConfig = getDefaultCharacterConfig(isFirst);
+                defaultConfig.systemPrompt = imported.systemPrompt || '';
+                defaultConfig.aiNickname = imported.aiNickname;
+                defaultConfig.userNickname = imported.userNickname;
+                
+                charactersList.push(character);
+                saveCharactersList();
+                localStorage.setItem(`char_${newId}_config`, JSON.stringify(defaultConfig));
+                localStorage.setItem(`char_${newId}_chatHistory`, JSON.stringify([]));
+                localStorage.setItem(`char_${newId}_longTermMemory`, JSON.stringify(getDefaultLongTermMemory()));
+                localStorage.setItem(`char_${newId}_pendingSummaryBubbles`, JSON.stringify([]));
+                
+                closeImportCharacterModal();
+                renderCharactersList();
+                
+                // 立即切换到导入的角色
+                switchToCharacter(newId);
+                showPage('chat-page');
+                
+                console.log('✅ 角色导入成功并已切换:', newId);
+            } catch (e) {
+                alert('导入失败: ' + e.message);
+            }
+        }
+        
+        document.getElementById('import-character-file').onchange = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('import-character-data').value = event.target.result;
+                };
+                reader.readAsText(file);
+            }
+        };
+        
+        // 搜索功能
+        document.getElementById('character-search-input').oninput = function(e) {
+            const keyword = e.target.value.toLowerCase();
+            document.querySelectorAll('.character-list-item').forEach(item => {
+                const name = item.querySelector('.character-list-name').textContent.toLowerCase();
+                item.style.display = name.includes(keyword) ? 'flex' : 'none';
+            });
+        };
+        
+        // 重写saveChatHistory,使其保存到当前角色
+        const originalSaveChatHistory = saveChatHistory;
+        saveChatHistory = function() {
+            if (currentCharacterId) {
+                saveCurrentCharacterData();
+            } else {
+                originalSaveChatHistory();
+            }
+        };
+        
+        // 初始化
+        loadCharactersList();
+        
+        // ==================== 头像上传功能 ====================
+        
+        // 新建角色的头像上传
+        document.getElementById('new-character-avatar-input').onchange = async function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                try {
+                    const avatarData = await processAvatarImage(file);
+                    tempNewCharacterAvatar = avatarData;
+                    
+                    const preview = document.getElementById('new-character-avatar-preview');
+                    const img = document.createElement('img');
+                    img.src = avatarData;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '6px';
+                    preview.innerHTML = '';
+                    preview.appendChild(img);
+                } catch (error) {
+                    alert(error);
+                }
+            }
+        };
+        
+        // 设置页面 - AI头像上传
+        document.getElementById('ai-avatar-input-settings').onchange = async function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                try {
+                    const avatarData = await processAvatarImage(file);
+                    config.aiAvatar = avatarData;
+                    
+                    renderAvatar(document.getElementById('ai-avatar-preview-settings'), avatarData, 'ai', config.aiNickname.substring(0, 1));
+                    document.getElementById('ai-avatar-remove-btn-settings').style.display = 'inline-block';
+                    
+                    // 保存到当前角色
+                    if (currentCharacterId) {
+                        saveCurrentCharacterData();
+                    }
+                } catch (error) {
+                    alert(error);
+                }
+            }
+        };
+        
+        // 设置页面 - 用户头像上传
+        document.getElementById('user-avatar-input-settings').onchange = async function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                try {
+                    const avatarData = await processAvatarImage(file);
+                    config.userAvatar = avatarData;
+                    
+                    renderAvatar(document.getElementById('user-avatar-preview-settings'), avatarData, 'user', config.userNickname.substring(0, 1));
+                    document.getElementById('user-avatar-remove-btn-settings').style.display = 'inline-block';
+                    
+                    // 保存到当前角色
+                    if (currentCharacterId) {
+                        saveCurrentCharacterData();
+                    }
+                } catch (error) {
+                    alert(error);
+                }
+            }
+        };
+        
+        // 移除AI头像
+        function removeAIAvatar() {
+            config.aiAvatar = null;
+            renderAvatar(document.getElementById('ai-avatar-preview-settings'), null, 'ai', config.aiNickname.substring(0, 1));
+            document.getElementById('ai-avatar-remove-btn-settings').style.display = 'none';
+            if (currentCharacterId) {
+                saveCurrentCharacterData();
+            }
+        }
+        
+        // 移除用户头像
+        function removeUserAvatar() {
+            config.userAvatar = null;
+            renderAvatar(document.getElementById('user-avatar-preview-settings'), null, 'user', config.userNickname.substring(0, 1));
+            document.getElementById('user-avatar-remove-btn-settings').style.display = 'none';
+            if (currentCharacterId) {
+                saveCurrentCharacterData();
+            }
+        }
+        
+        // 拉黑好友(暂未实现)
+        function blockCharacter() {
+            alert('拉黑功能暂未开放');
+        }
+        
+        // 删除好友
+        function deleteCharacter() {
+            if (!currentCharacterId) {
+                alert('未选择角色');
+                return;
+            }
+            
+            const character = charactersList.find(c => c.id === currentCharacterId);
+            if (!character) {
+                alert('角色不存在');
+                return;
+            }
+            
+            const characterName = character.name || config.aiNickname || '该角色';
+            
+            // 二次确认
+            const confirmed = confirm(
+                `确定要删除"${characterName}"吗?\n\n` +
+                `此操作将永久删除:\n` +
+                `• 所有聊天记录\n` +
+                `• 长期记忆数据\n` +
+                `• 角色配置信息\n\n` +
+                `此操作无法撤销!`
+            );
+            
+            if (!confirmed) {
+                return;
+            }
+            
+            // 再次确认
+            const doubleConfirmed = confirm(`最后确认:真的要删除"${characterName}"的所有数据吗?`);
+            if (!doubleConfirmed) {
+                return;
+            }
+            
+            console.log('🗑️ 开始删除角色:', currentCharacterId);
+            
+            // 从角色列表中移除
+            charactersList = charactersList.filter(c => c.id !== currentCharacterId);
+            saveCharactersList();
+            
+            // 删除localStorage中的所有数据
+            localStorage.removeItem(`char_${currentCharacterId}_config`);
+            localStorage.removeItem(`char_${currentCharacterId}_chatHistory`);
+            localStorage.removeItem(`char_${currentCharacterId}_longTermMemory`);
+            localStorage.removeItem(`char_${currentCharacterId}_pendingSummaryBubbles`);
+            
+            console.log('✅ 角色已删除:', currentCharacterId);
+            
+            // 清空当前状态
+            currentCharacterId = null;
+            chatHistory = [];
+            longTermMemory = getDefaultLongTermMemory();
+            pendingSummaryBubbles = [];
+            clearRuntimeState();
+            
+            // 返回角色列表页面
+            showPage('chat-list-page');
+            renderCharactersList();
+            
+            alert(`已删除"${characterName}"的所有数据`);
+        }
         
         
     </script>
