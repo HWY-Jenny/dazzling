@@ -66,12 +66,17 @@
             background: none;
             border: none;
             color: #333;
-            font-size: 22px; /* 统一字体大小 */
+            font-size: 22px;
             cursor: pointer;
             padding: 0;
             line-height: 1;
-            min-width: 32px; /* 确保有足够点击区域 */
+            min-width: 40px; /* 增加点击区域 */
             text-align: center;
+        }
+        
+        /* 返回按钮特殊样式 */
+        .header button svg {
+            vertical-align: middle;
         }
 
         /* 底部导航栏 (Footer for tab switching)
@@ -137,25 +142,25 @@
         .bubble {
             max-width: 100%; /* 改为100%，由contentWrapper控制最大宽度 */
             width: fit-content; /* 自适应内容宽度 */
-            padding: 10px 12px;
-            padding-bottom: 18px; /* 为时间戳留出空间 */
-            border-radius: 8px;
+            padding: 8px 12px; /* 调整为微信的padding */
+            padding-bottom: 20px; /* 为时间戳留出空间 */
+            border-radius: 6px; /* 微信的圆角 */
             line-height: 1.4;
             word-wrap: break-word;
             position: relative;
         }
 
         .message.user .bubble {
-            background-color: #9EEA6A; /* 用户气泡颜色 */
+            background-color: #95EC69; /* 微信用户气泡颜色 */
             color: #000;
-            border-top-right-radius: 0;
+            border-top-right-radius: 0; /* 右上角尖角 */
         }
 
         .message.assistant .bubble {
             background-color: #fff; /* AI气泡颜色 */
             color: #000;
-            border-top-left-radius: 0;
-            border: 1px solid #e7e7e7;
+            border-top-left-radius: 0; /* 左上角尖角 */
+            border: 1px solid #e5e5e5; /* 微信的边框颜色 */
         }
         
         /* 消息内容包装器（包含引用和气泡） */
@@ -226,11 +231,11 @@
             left: 0;
             right: 0;
             background-color: #f7f7f7;
-            padding: 6px 8px; /* 减小padding */
+            padding: 5px 6px; /* 进一步减小padding */
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 4px; /* 进一步减小间距 */
+            gap: 3px; /* 最小间距 */
             border-top: 1px solid #dcdcdc;
             box-shadow: 0 -1px 3px rgba(0,0,0,0.05);
             flex-shrink: 0;
@@ -240,13 +245,13 @@
         .chat-input-area .quote-reference {
             width: 100%;
             order: -1; /* 确保在最前面 */
-            margin: 0 0 8px 0; /* 只保留底部间距 */
+            margin: 0 0 6px 0; /* 只保留底部间距 */
         }
         
         .input-tool-btn {
             background: none;
             border: none;
-            padding: 6px; /* 减小padding */
+            padding: 4px; /* 最小padding */
             cursor: pointer;
             color: #666;
             display: flex;
@@ -255,12 +260,12 @@
             border-radius: 4px;
             transition: background-color 0.2s;
             flex-shrink: 0;
-            width: 32px; /* 固定宽度 */
-            height: 32px; /* 固定高度 */
+            width: 32px;
+            height: 32px;
         }
         
         .input-tool-btn svg {
-            width: 20px; /* 缩小图标 */
+            width: 20px;
             height: 20px;
         }
         
@@ -274,33 +279,16 @@
 
         #user-input {
             flex: 1 1 auto;
-            min-width: 100px; /* 减小最小宽度 */
-            padding: 7px 10px; /* 稍微减小padding */
+            min-width: 80px; /* 进一步减小最小宽度 */
+            padding: 6px 8px; /* 减小padding */
             border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: 15px; /* 稍微减小字体 */
+            font-size: 15px;
             resize: none;
             max-height: 80px;
             overflow-y: auto;
             background-color: white;
-        }
-
-        #generate-btn {
-            background-color: #1AAD19;
-            color: white;
-            border: none;
-            padding: 7px 10px; /* 减小padding */
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            white-space: nowrap;
-            flex-shrink: 0;
-            min-width: 48px; /* 减小最小宽度 */
-        }
-
-        #generate-btn:disabled {
-            background-color: #a8e6a6;
-            cursor: not-allowed;
+            line-height: 1.4;
         }
         
         /* 设置界面 */
@@ -560,6 +548,214 @@
         
         .avatar-remove-btn:active {
             opacity: 0.8;
+        }
+        
+        /* ========== 底部导航栏 ========== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background-color: #f7f7f7;
+            border-top: 1px solid #d9d9d9;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #999;
+            font-size: 11px;
+            gap: 2px;
+            padding: 4px 0;
+            transition: color 0.2s;
+            user-select: none;
+        }
+        
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+        }
+        
+        .nav-item.active {
+            color: #07c160; /* 微信绿 */
+        }
+        
+        .nav-item.active svg {
+            stroke: #07c160;
+        }
+        
+        /* 为底部导航留出空间 */
+        .page-with-nav .content {
+            padding-bottom: 50px;
+        }
+        
+        /* ========== 全局消息通知横幅 ========== */
+        .message-notification {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 12px 16px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 10000;
+            animation: slideDown 0.3s ease-out;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+        }
+        
+        .message-notification.show {
+            display: flex;
+        }
+        
+        .message-notification.hiding {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        .message-notification-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            flex-shrink: 0;
+            object-fit: cover;
+        }
+        
+        .message-notification-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .message-notification-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+            margin-bottom: 2px;
+        }
+        
+        .message-notification-text {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .message-notification-close {
+            width: 20px;
+            height: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            flex-shrink: 0;
+            font-size: 20px;
+            line-height: 1;
+        }
+        
+        /* ========== 配置提醒对话框 ========== */
+        .config-reminder-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+        }
+        
+        .config-reminder-dialog.show {
+            display: flex;
+        }
+        
+        .config-reminder-content {
+            background: white;
+            border-radius: 12px;
+            width: 85%;
+            max-width: 360px;
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .config-reminder-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .config-reminder-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .config-reminder-message {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .config-reminder-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .config-reminder-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .config-reminder-btn:active {
+            opacity: 0.7;
+        }
+        
+        .config-reminder-btn.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .config-reminder-btn.primary {
+            background: #07c160;
+            color: white;
         }
         
         /* ========== 聊天列表样式 ========== */
@@ -1268,43 +1464,68 @@
         
         /* 消息气泡内的引用样式 (微信风格) */
         .quoted-message {
-            background: rgba(0, 0, 0, 0.05);
-            border-left: 3px solid rgba(0, 0, 0, 0.2);
-            padding: 6px 10px;
-            margin-bottom: 5px;
-            border-radius: 4px;
-            font-size: 12px;
-            color: #666;
-            line-height: 1.4;
-            width: fit-content; /* 自适应内容宽度 */
-            min-width: 120px; /* 最小宽度，避免太窄 */
-            max-width: 280px; /* 限制最大宽度，避免太长 */
+            background: transparent; /* 无背景 */
+            border: none; /* 无边框 */
+            padding: 4px 0 0 0; /* 只在上方留一点间距 */
+            margin-top: 5px; /* 在气泡下方 */
+            margin-bottom: 0;
+            font-size: 11px;
+            color: #999; /* 全灰色 */
+            line-height: 1.3;
+            width: fit-content;
+            max-width: 100%;
             box-sizing: border-box;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
-            -webkit-line-clamp: 2; /* 最多显示2行 */
+            -webkit-line-clamp: 1; /* 只显示1行 */
             -webkit-box-orient: vertical;
         }
         
         .quoted-message .quote-sender {
-            font-weight: 600;
-            color: #576b95;
-            margin-right: 4px;
+            font-weight: normal; /* 不加粗 */
+            color: #999; /* 全灰色，不用蓝色 */
+            margin-right: 0;
         }
         
-        .message.user .quoted-message {
-            background: rgba(0, 0, 0, 0.08);
-            border-left-color: rgba(0, 0, 0, 0.3);
-        }
-        
+        /* 用户和AI的引用样式统一 */
+        .message.user .quoted-message,
         .message.assistant .quoted-message {
-            background: rgba(0, 0, 0, 0.03);
-            border-left-color: rgba(0, 0, 0, 0.15);
+            background: transparent;
+            border: none;
+            color: #999;
         }
     </style>
 </head>
 <body>
+
+    <!-- 全局消息通知横幅 -->
+    <div class="message-notification" id="message-notification">
+        <div class="message-notification-avatar" id="notification-avatar">
+            <div class="default-avatar ai" style="width: 40px; height: 40px; border-radius: 6px;">AI</div>
+        </div>
+        <div class="message-notification-content">
+            <div class="message-notification-name" id="notification-name">AI 聊天对象</div>
+            <div class="message-notification-text" id="notification-text">新消息</div>
+        </div>
+        <div class="message-notification-close">×</div>
+    </div>
+    
+    <!-- 配置缺失提醒对话框 -->
+    <div class="config-reminder-dialog" id="config-reminder-dialog">
+        <div class="config-reminder-content">
+            <div class="config-reminder-icon">⚙️</div>
+            <div class="config-reminder-title">需要配置 API</div>
+            <div class="config-reminder-message">
+                检测到 API 配置缺失，无法发送消息。<br>
+                请先在设置中配置 API Base URL、API Key 和 Model Name。
+            </div>
+            <div class="config-reminder-buttons">
+                <button class="config-reminder-btn secondary" onclick="closeConfigReminder()">稍后</button>
+                <button class="config-reminder-btn primary" onclick="goToSettings()">去设置</button>
+            </div>
+        </div>
+    </div>
 
     <div id="app-container" style="height: 100%;">
         
@@ -1370,9 +1591,13 @@
         </div>
 
         <!-- ==================== 聊天列表页面 ==================== -->
-        <div id="chat-list-page" class="page">
+        <div id="chat-list-page" class="page page-with-nav">
             <header class="header">
-                <button onclick="showPage('home-page')">‹</button>
+                <button onclick="showPage('home-page')">
+                    <svg width="10" height="18" viewBox="0 0 10 18" fill="none">
+                        <path d="M9 1L1 9L9 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
                 <span class="header-title">微信</span>
                 <button id="add-character-menu-btn" style="font-size: 26px;">+</button>
             </header>
@@ -1380,20 +1605,239 @@
             <div class="content" style="background-color: #fff;">
                 <div style="background-color: #EDEDED; padding: 8px 12px; border-bottom: 1px solid #d9d9d9;">
                     <div style="background-color: #fff; border-radius: 6px; padding: 6px 12px; display: flex; align-items: center; gap: 8px;">
-                        <span>🔍</span>
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <circle cx="8" cy="8" r="6.5" stroke="#999" stroke-width="1.5"/>
+                            <path d="M13 13L17 17" stroke="#999" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
                         <input type="text" placeholder="搜索" id="character-search-input" style="border: none; outline: none; flex: 1; font-size: 14px; background: transparent;">
                     </div>
                 </div>
                 
                 <div id="characters-list-container"></div>
             </div>
+            
+            <!-- 底部导航栏 -->
+            <div class="bottom-nav">
+                <div class="nav-item active" data-page="chat-list">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                    </svg>
+                    <span>微信</span>
+                </div>
+                <div class="nav-item" data-page="contacts">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>通讯录</span>
+                </div>
+                <div class="nav-item" data-page="discover">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor"/>
+                    </svg>
+                    <span>发现</span>
+                </div>
+                <div class="nav-item" data-page="me">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <span>我</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 通讯录页面 -->
+        <div id="contacts-page" class="page page-with-nav">
+            <header class="header">
+                <button onclick="showPage('home-page')">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
+                <span class="header-title">通讯录</span>
+                <button style="font-size: 26px;">+</button>
+            </header>
+            
+            <div class="content" style="background-color: #fff;">
+                <div style="padding: 100px 20px; text-align: center; color: #999;">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" style="margin: 0 auto 16px;">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <div style="font-size: 16px; margin-bottom: 8px;">通讯录功能</div>
+                    <div style="font-size: 14px;">敬请期待...</div>
+                </div>
+            </div>
+            
+            <!-- 底部导航栏 -->
+            <div class="bottom-nav">
+                <div class="nav-item" data-page="chat-list">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                    </svg>
+                    <span>微信</span>
+                </div>
+                <div class="nav-item active" data-page="contacts">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>通讯录</span>
+                </div>
+                <div class="nav-item" data-page="discover">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor"/>
+                    </svg>
+                    <span>发现</span>
+                </div>
+                <div class="nav-item" data-page="me">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <span>我</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 发现页面 -->
+        <div id="discover-page" class="page page-with-nav">
+            <header class="header">
+                <button onclick="showPage('home-page')">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
+                <span class="header-title">发现</span>
+                <span></span>
+            </header>
+            
+            <div class="content" style="background-color: #fff;">
+                <div style="padding: 100px 20px; text-align: center; color: #999;">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" style="margin: 0 auto 16px;">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="#ccc"/>
+                    </svg>
+                    <div style="font-size: 16px; margin-bottom: 8px;">发现功能</div>
+                    <div style="font-size: 14px;">敬请期待...</div>
+                </div>
+            </div>
+            
+            <!-- 底部导航栏 -->
+            <div class="bottom-nav">
+                <div class="nav-item" data-page="chat-list">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                    </svg>
+                    <span>微信</span>
+                </div>
+                <div class="nav-item" data-page="contacts">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>通讯录</span>
+                </div>
+                <div class="nav-item active" data-page="discover">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor"/>
+                    </svg>
+                    <span>发现</span>
+                </div>
+                <div class="nav-item" data-page="me">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <span>我</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 我的页面 -->
+        <div id="me-page" class="page page-with-nav">
+            <header class="header">
+                <button onclick="showPage('home-page')">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
+                <span class="header-title">我</span>
+                <span></span>
+            </header>
+            
+            <div class="content" style="background-color: #fff;">
+                <div style="padding: 100px 20px; text-align: center; color: #999;">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" style="margin: 0 auto 16px;">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <div style="font-size: 16px; margin-bottom: 8px;">个人中心</div>
+                    <div style="font-size: 14px;">敬请期待...</div>
+                </div>
+            </div>
+            
+            <!-- 底部导航栏 -->
+            <div class="bottom-nav">
+                <div class="nav-item" data-page="chat-list">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                    </svg>
+                    <span>微信</span>
+                </div>
+                <div class="nav-item" data-page="contacts">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>通讯录</span>
+                </div>
+                <div class="nav-item" data-page="discover">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor"/>
+                    </svg>
+                    <span>发现</span>
+                </div>
+                <div class="nav-item active" data-page="me">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <span>我</span>
+                </div>
+            </div>
         </div>
 
         <div id="chat-page" class="page">
             <header class="header">
-                <button id="back-to-chat-list-btn">‹</button>
+                <button id="back-to-chat-list-btn">
+                    <svg width="10" height="18" viewBox="0 0 10 18" fill="none">
+                        <path d="M9 1L1 9L9 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
                 <span class="header-title" id="chat-name">AI 聊天对象</span>
-                <button onclick="openSettings()" style="letter-spacing: 2px;">⋯</button>
+                <button onclick="openSettings()">
+                    <svg width="20" height="4" viewBox="0 0 20 4" fill="currentColor">
+                        <circle cx="2" cy="2" r="2"/>
+                        <circle cx="10" cy="2" r="2"/>
+                        <circle cx="18" cy="2" r="2"/>
+                    </svg>
+                </button>
             </header>
             
             <div class="content">
@@ -1429,13 +1873,16 @@
                         <line x1="8" y1="12" x2="16" y2="12"></line>
                     </svg>
                 </button>
-                <button id="generate-btn" disabled>发送</button>
             </div>
         </div>
 
         <div id="settings-page" class="page">
             <header class="header">
-                <button onclick="closeSettings()">‹</button>
+                <button onclick="closeSettings()">
+                    <svg width="10" height="18" viewBox="0 0 10 18" fill="none">
+                        <path d="M9 1L1 9L9 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
                 <span class="header-title">设置</span>
                 <span></span> </header>
             <div class="content" style="padding: 20px; overflow-y: auto; flex-grow: 1;">
@@ -1581,46 +2028,6 @@
                 <hr>
                 <h3>长期记忆设置</h3>
                 
-                <h4 style="margin-top: 20px; margin-bottom: 10px; color: #555;">基本信息（可选预填写）</h4>
-                <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                    <p style="font-size: 0.85em; color: #666; margin-bottom: 10px;">
-                        💡 提前填写基本信息可以让AI更好地了解你。这些信息会在聊天时自动提供给AI。
-                    </p>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-                        <div>
-                            <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">姓名：</label>
-                            <input type="text" id="memory-name" placeholder="例如：小明" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">年龄：</label>
-                            <input type="text" id="memory-age" placeholder="例如：25" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">职业：</label>
-                            <input type="text" id="memory-occupation" placeholder="例如：程序员" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">居住地：</label>
-                            <input type="text" id="memory-location" placeholder="例如：北京" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top: 10px;">
-                        <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">外貌特征：</label>
-                        <input type="text" id="memory-appearance" placeholder="例如：高个子、短发、戴眼镜" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
-                    </div>
-                    
-                    <div style="margin-top: 10px;">
-                        <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">兴趣爱好：</label>
-                        <input type="text" id="memory-interests" placeholder="例如：编程、游戏、旅行" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
-                    </div>
-                    
-                    <button onclick="saveBasicInfo()" style="margin-top: 10px; padding: 8px 16px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">
-                        💾 保存基本信息
-                    </button>
-                </div>
-                
                 <h4 style="margin-bottom: 10px; color: #555;">自动总结设置</h4>
                 <div style="margin-top: 15px;">
                     <label for="auto-summary-interval" style="display: block; margin-bottom: 5px;">
@@ -1678,6 +2085,10 @@
                         </button>
                     </div>
                     
+                    <div style="margin-top: 8px; padding: 8px 12px; background: #e3f2fd; border-radius: 6px; font-size: 12px; color: #1565C0;">
+                        💡 <strong>提示：</strong>点击"查看/编辑记忆"可以预填写基本信息（姓名、年龄、职业等），让AI更好地了解你
+                    </div>
+                    
                     <div id="memory-status" style="margin-top: 10px; padding: 10px; background-color: #f0f0f0; border-radius: 4px; font-size: 0.9em;">
                         <div><strong>当前状态：</strong></div>
                         <div>• 总气泡数：<span id="total-bubbles-count">0</span> 个</div>
@@ -1701,15 +2112,16 @@
                         导出或导入完整的聊天记录，包含所有对话内容和时间戳。
                     </div>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;">
-                        <button id="export-btn" style="padding: 8px 16px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        <button id="export-btn" style="padding: 8px 16px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
                             💾 导出聊天记录
                         </button>
-                    </div>
-                    <div>
-                        <input type="file" id="import-file" accept=".json" style="margin-bottom: 8px; width: 100%;">
-                        <button id="import-btn" disabled style="padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">
-                            📥 导入聊天记录（覆盖当前）
+                        <button onclick="document.getElementById('import-file').click()" style="padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                            📥 导入聊天记录
                         </button>
+                    </div>
+                    <input type="file" id="import-file" accept=".json" style="display: none;">
+                    <div style="padding: 8px 12px; background: #fff3cd; border-radius: 6px; font-size: 12px; color: #856404;">
+                        ⚠️ <strong>注意：</strong>导入聊天记录将覆盖当前所有对话内容，此操作无法撤销
                     </div>
                 </div>
 
@@ -1791,9 +2203,9 @@
                     <div style="font-size: 12px; color: #999; margin-top: 4px;">显示在列表和聊天框的名字</div>
                 </div>
                 <div style="margin-bottom: 16px;">
-                    <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #333;">角色姓名 (可选)</label>
-                    <input type="text" id="new-character-name" placeholder="例如: 艾莉娅" style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 15px; box-sizing: border-box;">
-                    <div style="font-size: 12px; color: #999; margin-top: 4px;">角色的真实姓名,创建后不可更改,用于提醒你这是谁</div>
+                    <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #333;">角色姓名 <span style="color: #ff4d4f;">*</span></label>
+                    <input type="text" id="new-character-name" placeholder="例如: 艾莉娅" required style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 15px; box-sizing: border-box;">
+                    <div style="font-size: 12px; color: #999; margin-top: 4px;">角色的真实姓名，创建后不可更改，用于提醒你这是谁</div>
                 </div>
                 <div style="margin-bottom: 16px;">
                     <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #333;">用户昵称 <span style="color: #ff4d4f;">*</span></label>
@@ -2362,7 +2774,6 @@
 
         const chatContainer = document.getElementById('chat-container');
         const userInput = document.getElementById('user-input');
-        const generateBtn = document.getElementById('generate-btn');
         const systemPromptArea = document.getElementById('system-prompt');
         
         // 输入框工具按钮（开发中的功能）
@@ -2698,7 +3109,7 @@
             // 将默认Prompt显示在设置界面
             systemPromptArea.value = config.systemPrompt; 
             // 启用或禁用发送按钮
-            updateSendButtonState();
+            
             
             // 更新聊天对象名称
             updateChatName();
@@ -2715,6 +3126,12 @@
             initializeIconInteractions();
             // 启用拖拽（只注册一次）
             enableDragAndDrop();
+            
+            // 初始化底部导航栏
+            initializeBottomNav();
+            
+            // 初始化消息通知
+            initializeMessageNotification();
         });
 
         function initializeIconInteractions() {
@@ -3132,14 +3549,6 @@
             document.getElementById('auto-summary-interval').value = config.autoSummaryInterval || 50;
             document.getElementById('max-important-events').value = config.maxImportantEvents || 10;
             
-            // 加载基本信息到输入框
-            document.getElementById('memory-name').value = longTermMemory.basic_info?.姓名 || '';
-            document.getElementById('memory-age').value = longTermMemory.basic_info?.年龄 || '';
-            document.getElementById('memory-occupation').value = longTermMemory.basic_info?.职业 || '';
-            document.getElementById('memory-location').value = longTermMemory.basic_info?.居住地 || '';
-            document.getElementById('memory-appearance').value = longTermMemory.basic_info?.外貌特征 || '';
-            document.getElementById('memory-interests').value = longTermMemory.basic_info?.兴趣爱好 || '';
-            
             // 更新记忆状态显示
             updateMemoryStatus();
             
@@ -3315,7 +3724,7 @@
             document.getElementById('chat-name').textContent = config.aiNickname;
             
             alert('设置已保存并生效！');
-            updateSendButtonState();
+            
             closeSettings();
         }
         /**
@@ -3421,48 +3830,89 @@
          */
         document.getElementById('import-file').addEventListener('change', (event) => {
             const file = event.target.files[0];
-            if (file && file.type === "application/json") {
+            if (!file) return;
+            
+            // 确认操作
+            if (!confirm('导入聊天记录将覆盖当前所有对话内容，此操作无法撤销。\n\n确定要继续吗？')) {
+                event.target.value = ''; // 清空文件选择
+                return;
+            }
+            
+            if (file.type === "application/json") {
                 const reader = new FileReader();
 
                 reader.onload = function(e) {
                     try {
                         const importedData = JSON.parse(e.target.result);
                         chatHistory = importedData; 
-                        localStorage.setItem('chatHistory', JSON.stringify(importedData));
+                        saveChatHistory();
                         
                         // 重置待总结气泡缓冲区
                         pendingSummaryBubbles = [];
                         localStorage.setItem('pendingSummaryBubbles', JSON.stringify(pendingSummaryBubbles));
                         
+                        // 重新渲染聊天
+                        renderChatHistory();
+                        
                         // 更新记忆状态显示
                         updateMemoryStatus();
                         
-                        alert('聊天记录导入成功！待总结气泡已重置。');
-                        // 刷新或更新聊天 UI
+                        alert('✅ 聊天记录导入成功！');
+                        event.target.value = ''; // 清空文件选择
                     } catch (error) {
-                        alert('文件解析失败，请确保文件是有效的 JSON 格式。');
+                        alert('❌ 文件解析失败，请确保文件是有效的 JSON 格式。\n\n错误信息：' + error.message);
+                        event.target.value = ''; // 清空文件选择
                     }
                 };
-                reader.readAsText(file); // 读取文件内容为文本
+                reader.readAsText(file);
             } else {
-                alert('请选择 JSON 文件。');
+                alert('❌ 请选择 JSON 文件。');
+                event.target.value = ''; // 清空文件选择
             }
         });
 
         /**
          * 更新发送按钮的状态
          */
-        function updateSendButtonState() {
-            // 只有当 baseurl 和 apikey 都设置了，并且用户输入框有内容时才启用发送按钮
-            const hasApiConfig = config.baseurl && config.apikey;
-            const hasInput = userInput.value.trim().length > 0;
-            
-            generateBtn.disabled = !hasApiConfig || !hasInput;
-            generateBtn.textContent = hasApiConfig ? (hasInput ? '发送' : '输入中...') : '配置缺失';
+        // 监听用户输入，回车发送消息（Shift+Enter换行）
+        userInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                
+                // 检查API配置
+                if (!config.baseurl || !config.apikey) {
+                    showConfigReminder();
+                    return;
+                }
+                
+                // 检查输入内容
+                if (userInput.value.trim().length > 0) {
+                    generateResponse();
+                }
+            }
+        });
+        
+        /**
+         * 显示配置缺失提醒
+         */
+        function showConfigReminder() {
+            document.getElementById('config-reminder-dialog').classList.add('show');
         }
-
-        // 监听用户输入，实时更新发送按钮状态
-        userInput.addEventListener('input', updateSendButtonState);
+        
+        /**
+         * 关闭配置提醒
+         */
+        function closeConfigReminder() {
+            document.getElementById('config-reminder-dialog').classList.remove('show');
+        }
+        
+        /**
+         * 前往设置页面
+         */
+        function goToSettings() {
+            closeConfigReminder();
+            openSettings();
+        }
         
         /**
          * 清空聊天记录
@@ -5002,18 +5452,10 @@ ${conversationText}
             
             pendingSummaryBubbles = [];
             
-            // 同时清空设置页面的基本信息输入框
-            document.getElementById('memory-name').value = '';
-            document.getElementById('memory-age').value = '';
-            document.getElementById('memory-occupation').value = '';
-            document.getElementById('memory-location').value = '';
-            document.getElementById('memory-appearance').value = '';
-            document.getElementById('memory-interests').value = '';
-            
             saveChatHistory();
             updateMemoryStatus();
             
-            alert('长期记忆已清空！');
+            alert('✅ 长期记忆已清空！');
         }
         
         // ========== 批量生成功能 ==========
@@ -5563,21 +6005,6 @@ ${JSON.stringify(importedMemoryData, null, 2)}
             const contentWrapper = document.createElement('div');
             contentWrapper.className = 'message-content-wrapper';
             
-            // 如果有引用,先添加引用块(在气泡外部上方)
-            if (quotedText && quotedSender) {
-                const quotedDiv = document.createElement('div');
-                quotedDiv.classList.add('quoted-message');
-                
-                const senderSpan = document.createElement('span');
-                senderSpan.classList.add('quote-sender');
-                senderSpan.textContent = quotedSender + ':';
-                
-                quotedDiv.appendChild(senderSpan);
-                quotedDiv.appendChild(document.createTextNode(' ' + quotedText));
-                
-                contentWrapper.appendChild(quotedDiv);
-            }
-
             const bubbleDiv = document.createElement('div');
             bubbleDiv.classList.add('bubble');
             
@@ -5613,6 +6040,14 @@ ${JSON.stringify(importedMemoryData, null, 2)}
             
             bubbleDiv.appendChild(metaDiv);
             contentWrapper.appendChild(bubbleDiv);
+            
+            // 如果有引用，添加引用块（在气泡下方）
+            if (quotedText && quotedSender) {
+                const quotedDiv = document.createElement('div');
+                quotedDiv.classList.add('quoted-message');
+                quotedDiv.textContent = quotedSender + ': ' + quotedText;
+                contentWrapper.appendChild(quotedDiv);
+            }
             
             messageDiv.appendChild(avatarDiv);
             messageDiv.appendChild(contentWrapper);
@@ -5720,7 +6155,17 @@ ${JSON.stringify(importedMemoryData, null, 2)}
                     // 实现延迟效果
                     setTimeout(() => {
                         // 每条消息都显示（跳过scrollToBottom，因为displayMessage会自动调用）
-                        displayMessage(cleanSegment, 'assistant', 0, aiTimestamp, true, null, false); 
+                        displayMessage(cleanSegment, 'assistant', 0, aiTimestamp, true, null, false);
+                        
+                        // 触发消息通知（只在第一条消息时触发，且不在聊天页面时）
+                        if (index === 0) {
+                            const currentPage = document.querySelector('.page.active');
+                            if (currentPage && currentPage.id !== 'chat-page') {
+                                const characterName = config.aiNickname || 'AI 聊天对象';
+                                const avatarData = config.aiAvatar || null;
+                                showMessageNotification(currentCharacterId, characterName, cleanSegment, avatarData);
+                            }
+                        }
                     }, index * delay); 
                 }
             });
@@ -6058,13 +6503,16 @@ ${JSON.stringify(importedMemoryData, null, 2)}
         /**
          * 点击发送按钮
          */
-        generateBtn.onclick = async () => {
+        /**
+         * 发送消息
+         */
+        async function generateResponse() {
             let userMessage = userInput.value.trim();
             if (!userMessage) return;
 
             // 检查配置
             if (!config.baseurl || !config.apikey) {
-                alert('请先在设置中填写 Base URL 和 API Key!');
+                showConfigReminder();
                 return;
             }
             
@@ -6088,7 +6536,6 @@ ${JSON.stringify(importedMemoryData, null, 2)}
             
             // 3. 清空输入框
             userInput.value = '';
-            updateSendButtonState();
             
             // 4. 将此气泡ID加入待发送队列
             pendingUserMessages.push(bubble.id);
@@ -6096,7 +6543,8 @@ ${JSON.stringify(importedMemoryData, null, 2)}
             
             // 5. 启动/重启计时器
             startBatchTimer();
-        };
+        }
+        
         /**
          *滚动到聊天内容底部（双 requestAnimationFrame 确保渲染完成）
          
@@ -6114,15 +6562,6 @@ ${JSON.stringify(importedMemoryData, null, 2)}
                 });
             }
         }
-        // 监听 Enter 键发送 (可选)
-        userInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault(); // 阻止默认的换行行为
-                if (!generateBtn.disabled) {
-                    generateBtn.click();
-                }
-            }
-        });
         
         /**
          * 全局诊断函数 - 在console中调用来检查布局
@@ -6546,22 +6985,27 @@ ${JSON.stringify(importedMemoryData, null, 2)}
             const userNickname = document.getElementById('new-character-user-nickname').value.trim();
             const systemPrompt = document.getElementById('new-character-prompt').value.trim();
             
+            // 验证必填字段
+            if (!characterName) {
+                alert('❌ 请输入角色姓名');
+                return;
+            }
             if (!aiNickname) {
-                alert('请输入角色昵称');
+                alert('❌ 请输入角色昵称');
                 return;
             }
             if (!userNickname) {
-                alert('请输入用户昵称');
+                alert('❌ 请输入用户昵称');
                 return;
             }
             
             const newId = `char_${Date.now()}`;
             const isFirst = charactersList.length === 0;
             
-            // 创建角色基本信息 (name用于提醒用户,不做唯一标识,可以为空或重复)
+            // 创建角色基本信息
             const character = {
                 id: newId,
-                name: characterName || aiNickname, // 如果没有姓名,使用昵称
+                name: characterName,
                 createdAt: new Date().toISOString()
             };
             
@@ -6589,7 +7033,7 @@ ${JSON.stringify(importedMemoryData, null, 2)}
             switchToCharacter(newId);
             showPage('chat-page');
             
-            console.log('✅角色创建成功并已切换:', newId, '姓名:', characterName || '(未设置)', '昵称:', aiNickname);
+            console.log('✅ 角色创建成功并已切换:', newId, '姓名:', characterName, '昵称:', aiNickname);
         }
         
         // 导入角色模态框
@@ -6839,6 +7283,140 @@ ${JSON.stringify(importedMemoryData, null, 2)}
             renderCharactersList();
             
             alert(`已删除"${characterName}"的所有数据`);
+        }
+        
+        // ==================== 底部导航栏功能 ====================
+        
+        /**
+         * 初始化底部导航栏
+         */
+        function initializeBottomNav() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const targetPage = item.getAttribute('data-page');
+                    switchBottomNavPage(targetPage);
+                });
+            });
+        }
+        
+        /**
+         * 切换底部导航页面
+         */
+        function switchBottomNavPage(pageName) {
+            const pageMap = {
+                'chat-list': 'chat-list-page',
+                'contacts': 'contacts-page',
+                'discover': 'discover-page',
+                'me': 'me-page'
+            };
+            
+            const targetPageId = pageMap[pageName];
+            if (!targetPageId) return;
+            
+            // 显示目标页面
+            showPage(targetPageId);
+            
+            // 更新所有底部导航栏的active状态
+            document.querySelectorAll('.bottom-nav').forEach(nav => {
+                nav.querySelectorAll('.nav-item').forEach(item => {
+                    if (item.getAttribute('data-page') === pageName) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+            });
+        }
+        
+        // ==================== 全局消息通知功能 ====================
+        
+        let notificationTimeout = null;
+        
+        /**
+         * 初始化消息通知
+         */
+        function initializeMessageNotification() {
+            const notification = document.getElementById('message-notification');
+            
+            // 点击通知跳转到对应聊天
+            notification.addEventListener('click', function(e) {
+                // 如果点击的是关闭按钮，只关闭通知
+                if (e.target.classList.contains('message-notification-close')) {
+                    hideMessageNotification();
+                    return;
+                }
+                
+                // 否则跳转到聊天页面
+                if (currentCharacterId) {
+                    showPage('chat-page');
+                    hideMessageNotification();
+                }
+            });
+        }
+        
+        /**
+         * 显示消息通知
+         * @param {string} characterId - 角色ID
+         * @param {string} characterName - 角色名称
+         * @param {string} message - 消息内容
+         * @param {string} avatarData - 头像数据
+         */
+        function showMessageNotification(characterId, characterName, message, avatarData) {
+            // 如果当前在聊天页面，不显示通知
+            const currentPage = document.querySelector('.page.active');
+            if (currentPage && currentPage.id === 'chat-page') {
+                return;
+            }
+            
+            const notification = document.getElementById('message-notification');
+            const avatarEl = document.getElementById('notification-avatar');
+            const nameEl = document.getElementById('notification-name');
+            const textEl = document.getElementById('notification-text');
+            
+            // 设置头像
+            if (avatarData) {
+                avatarEl.innerHTML = `<img src="${avatarData}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">`;
+            } else {
+                const firstLetter = characterName.substring(0, 1);
+                avatarEl.innerHTML = `<div class="default-avatar ai" style="width: 40px; height: 40px; border-radius: 6px; font-size: 16px;">${firstLetter}</div>`;
+            }
+            
+            // 设置内容
+            nameEl.textContent = characterName;
+            textEl.textContent = message;
+            
+            // 显示通知
+            notification.classList.remove('hiding');
+            notification.classList.add('show');
+            
+            // 清除之前的定时器
+            if (notificationTimeout) {
+                clearTimeout(notificationTimeout);
+            }
+            
+            // 3秒后自动隐藏
+            notificationTimeout = setTimeout(() => {
+                hideMessageNotification();
+            }, 3000);
+        }
+        
+        /**
+         * 隐藏消息通知
+         */
+        function hideMessageNotification() {
+            const notification = document.getElementById('message-notification');
+            notification.classList.add('hiding');
+            
+            setTimeout(() => {
+                notification.classList.remove('show', 'hiding');
+            }, 300);
+            
+            if (notificationTimeout) {
+                clearTimeout(notificationTimeout);
+                notificationTimeout = null;
+            }
         }
         
         
