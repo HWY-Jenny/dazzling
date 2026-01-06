@@ -905,6 +905,7 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
             min-width: 270px;
+            max-width: 90vw; /* 限制最大宽度为屏幕宽度的90% */
         }
         
         .bubble-menu.active {
@@ -926,6 +927,7 @@
             border-radius: 8px;
             background: #f7f7f7;
             text-align: center;
+            min-width: 0; /* 允许内容收缩 */
         }
         
         .bubble-menu-item:hover {
@@ -5262,16 +5264,49 @@
                 };
             });
             
-            // 定位菜单
+            // 定位菜单 - 智能定位避免超出屏幕
             const x = touchOrEvent.clientX || touchOrEvent.pageX;
             const y = touchOrEvent.clientY || touchOrEvent.pageY;
             
+            // 先设置初始位置，以便获取菜单尺寸
             bubbleMenu.style.left = x + 'px';
             bubbleMenu.style.top = y + 'px';
             
-            // 显示
+            // 显示菜单（先显示才能获取尺寸）
             menuOverlay.classList.add('active');
             bubbleMenu.classList.add('active');
+            
+            // 获取菜单和视口尺寸
+            const menuRect = bubbleMenu.getBoundingClientRect();
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            
+            let finalX = x;
+            let finalY = y;
+            
+            // 水平方向调整
+            if (x + menuRect.width > viewportWidth - 10) {
+                // 菜单右边超出屏幕，调整到鼠标左边
+                finalX = x - menuRect.width;
+                // 如果左边也不够，则贴着右边缘
+                if (finalX < 10) {
+                    finalX = viewportWidth - menuRect.width - 10;
+                }
+            }
+            
+            // 垂直方向调整
+            if (y + menuRect.height > viewportHeight - 10) {
+                // 菜单下边超出屏幕，调整到鼠标上方
+                finalY = y - menuRect.height;
+                // 如果上边也不够，则贴着底部边缘
+                if (finalY < 10) {
+                    finalY = viewportHeight - menuRect.height - 10;
+                }
+            }
+            
+            // 应用最终位置
+            bubbleMenu.style.left = Math.max(10, finalX) + 'px';
+            bubbleMenu.style.top = Math.max(10, finalY) + 'px';
             
             // 点击遮罩关闭
             menuOverlay.onclick = () => closeBubbleMenu(bubbleElement);
@@ -5965,8 +6000,24 @@
                 setupLongPressMenu(bubbleDiv, bubble);
             }
             
-            // 删除后续所有消息
-            const bubblestoDelete = chatHistory.slice(bubbleIndex + 1);
+            // 【优化的删除逻辑】
+            // 1. 向后延伸：保留当前编辑气泡之后的所有连续user气泡
+            let keepUntilIndex = bubbleIndex; // 默认保留到当前编辑的气泡
+            
+            for (let i = bubbleIndex + 1; i < chatHistory.length; i++) {
+                if (chatHistory[i].role === 'user') {
+                    // 如果是用户气泡，继续向后保留
+                    keepUntilIndex = i;
+                } else {
+                    // 遇到第一个非用户气泡(assistant)，停止
+                    break;
+                }
+            }
+            
+            console.log(`📝 编辑逻辑：保留气泡 0-${keepUntilIndex}，删除气泡 ${keepUntilIndex + 1}-${chatHistory.length - 1}`);
+            
+            // 2. 删除从第一个assistant开始的所有消息
+            const bubblestoDelete = chatHistory.slice(keepUntilIndex + 1);
             
             // 从UI删除
             bubblestoDelete.forEach(b => {
@@ -5975,7 +6026,7 @@
             });
             
             // 从数据删除
-            chatHistory = chatHistory.slice(0, bubbleIndex + 1);
+            chatHistory = chatHistory.slice(0, keepUntilIndex + 1);
             pendingSummaryBubbles = pendingSummaryBubbles.filter(b => 
                 !bubblestoDelete.find(deleted => deleted.id === b.id)
             );
@@ -6038,11 +6089,23 @@
          * @param {boolean} manual - 是否为手动触发
          */
         async function generateMemorySummary(manual = false) {
+            // 【新增】先清理已被删除的pending气泡
+            const validPendingBubbles = pendingSummaryBubbles.filter(pendingBubble => {
+                return chatHistory.some(historyBubble => historyBubble.id === pendingBubble.id);
+            });
+            
+            if (validPendingBubbles.length !== pendingSummaryBubbles.length) {
+                const removedCount = pendingSummaryBubbles.length - validPendingBubbles.length;
+                console.log(`🗑️ 生成记忆前清理了 ${removedCount} 个已删除的pending气泡`);
+                pendingSummaryBubbles = validPendingBubbles;
+            }
+            
             // 检查是否有待总结的内容
             if (pendingSummaryBubbles.length === 0) {
                 if (manual) {
                     alert('当前没有新的对话需要总结！');
                 }
+                console.log('⚠️ 没有有效的pending气泡，跳过记忆生成');
                 return;
             }
             
@@ -6389,10 +6452,27 @@ ${conversationText}
         function checkAutoSummary() {
             const autoSummaryInterval = parseInt(localStorage.getItem('autoSummaryInterval')) || 50;
             
+            // 【新增检查】清理已被删除的pending气泡
+            // 如果pending气泡不在chatHistory中，说明已被删除，应该移除
+            const validPendingBubbles = pendingSummaryBubbles.filter(pendingBubble => {
+                return chatHistory.some(historyBubble => historyBubble.id === pendingBubble.id);
+            });
+            
+            // 如果发现有被删除的气泡，更新pendingSummaryBubbles
+            if (validPendingBubbles.length !== pendingSummaryBubbles.length) {
+                const removedCount = pendingSummaryBubbles.length - validPendingBubbles.length;
+                console.log(`🗑️ 清理了 ${removedCount} 个已删除的pending气泡`);
+                pendingSummaryBubbles = validPendingBubbles;
+                saveChatHistory(); // 保存更新后的pending列表
+            }
+            
+            // 检查是否达到自动总结条件（使用清理后的列表）
             if (pendingSummaryBubbles.length >= autoSummaryInterval) {
                 console.log('🧠 达到自动总结条件，开始生成记忆...');
                 // 异步执行，不阻塞主流程
                 setTimeout(() => generateMemorySummary(false), 1000);
+            } else if (pendingSummaryBubbles.length > 0) {
+                console.log(`📊 当前pending: ${pendingSummaryBubbles.length}/${autoSummaryInterval} 个气泡`);
             }
         }
         
