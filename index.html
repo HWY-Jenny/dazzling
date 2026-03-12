@@ -766,6 +766,39 @@
             color: white;
         }
         
+        /* ========== 新版本上线提醒弹窗 ========== */
+        .new-version-dialog {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10002;
+        }
+        .new-version-dialog.show { display: flex; }
+        .new-version-content {
+            background: white;
+            border-radius: 12px;
+            width: 85%;
+            max-width: 360px;
+            padding: 24px;
+            text-align: center;
+        }
+        .new-version-title { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 12px; }
+        .new-version-message { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 20px; }
+        .new-version-buttons { display: flex; gap: 12px; }
+        .new-version-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        .new-version-btn.secondary { background: #f0f0f0; color: #333; }
+        .new-version-btn.primary { background: #07c160; color: white; }
+        
         /* ========== 聊天列表样式 ========== */
         .character-list-item {
             display: flex;
@@ -1898,6 +1931,23 @@
             <div class="config-reminder-buttons">
                 <button class="config-reminder-btn secondary" onclick="closeConfigReminder()">稍后</button>
                 <button class="config-reminder-btn primary" onclick="goToSettings()">去设置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新版本上线提醒 -->
+    <div class="new-version-dialog" id="new-version-dialog">
+        <div class="new-version-content">
+            <div class="new-version-title">🎉 新版本正式上线</div>
+            <div class="new-version-message">
+                当前为 <strong>Pure 版 </strong>，可正常使用。<br><br>
+                <strong>Pure 版不再更新</strong>：新版本已覆盖所有功能，支持自带api和纯本地存储。<br><br>
+                <strong>新版本已上线</strong>：免费使用，注册即送大额额度；具备主动消息、系统推送等功能。<br><br>
+                新网址：<strong>miniphone.linglow.ai</strong>
+            </div>
+            <div class="new-version-buttons">
+                <button class="new-version-btn secondary" onclick="closeNewVersionDialog()">继续使用本页</button>
+                <button class="new-version-btn primary" onclick="goToNewVersion()">前往新版本</button>
             </div>
         </div>
     </div>
@@ -4651,6 +4701,9 @@
             
             // 初始化消息通知
             initializeMessageNotification();
+            
+            // 每次进入/刷新时显示新版本上线提醒
+            document.getElementById('new-version-dialog').classList.add('show');
         });
 
         function initializeIconInteractions() {
@@ -6040,6 +6093,21 @@
         function goToSettings() {
             closeConfigReminder();
             openSettings();
+        }
+        
+        /**
+         * 关闭新版本提醒弹窗
+         */
+        function closeNewVersionDialog() {
+            document.getElementById('new-version-dialog').classList.remove('show');
+        }
+        
+        /**
+         * 前往新版本正式站
+         */
+        function goToNewVersion() {
+            window.open('https://miniphone.linglow.ai', '_blank');
+            closeNewVersionDialog();
         }
         
         /**
